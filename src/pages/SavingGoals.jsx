@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function SavingGoals() {
 
     const [goals, setGoals] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadGoals();
@@ -62,6 +64,16 @@ export default function SavingGoals() {
             <div className="page-container">
 
                 <h1>Objetivos de ahorro</h1>
+
+                <button
+                    className="edit-btn"
+                    onClick={() => navigate("/saving-goals/create")}
+                    style={{
+                        marginBottom: "20px"
+                    }}
+                >
+                    + Nuevo Objetivo
+                </button>
 
                 {goals.length === 0 ? (
 

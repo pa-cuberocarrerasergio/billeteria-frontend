@@ -7,6 +7,7 @@ import SavingGoals from "./pages/SavingGoals";
 import Coach from "./pages/Coach";
 import Profile from "./pages/Profile";
 import CreateTransaction from "./pages/CreateTransaction";
+import CreateSavingGoal from "./pages/CreateSavingGoal";
 
 function App() {
     const token = localStorage.getItem("token");
@@ -38,6 +39,10 @@ function App() {
                 <Route
                     path="/transactions/create"
                     element={<CreateTransaction />}
+                />
+                <Route
+                    path="/saving-goals/create"
+                    element={<CreateSavingGoal />}
                 />
             </Routes>
         </BrowserRouter>
