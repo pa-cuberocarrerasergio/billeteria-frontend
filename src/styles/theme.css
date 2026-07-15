@@ -279,3 +279,30 @@ body {
     background: var(--primary);
     border-radius: 10px;
 }
+
+.page-container {
+
+    padding: 30px;
+}
+
+.danger-btn {
+
+    background: #dc2626;
+
+    border: none;
+
+    color: white;
+
+    padding: 10px 16px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    margin-top: 10px;
+}
+
+.danger-btn:hover {
+
+    opacity: .85;
+}

@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 
 export default function Transactions() {
+
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
@@ -10,10 +11,35 @@ export default function Transactions() {
     }, []);
 
     const loadTransactions = async () => {
+
         try {
+
             const response = await api.get("/transactions");
+
             setTransactions(response.data);
+
         } catch (error) {
+
+            console.error(error);
+        }
+    };
+
+    const deleteTransaction = async (id) => {
+
+        const confirmed = window.confirm(
+            "¿Eliminar transacción?"
+        );
+
+        if (!confirmed) return;
+
+        try {
+
+            await api.delete(`/transactions/${id}`);
+
+            loadTransactions();
+
+        } catch (error) {
+
             console.error(error);
         }
     };
@@ -22,15 +48,27 @@ export default function Transactions() {
         <>
             <Navbar />
 
-            <div>
+            <div className="page-container">
+
                 <h1>Transacciones</h1>
 
                 {transactions.length === 0 ? (
+
                     <p>No hay transacciones.</p>
+
                 ) : (
+
                     transactions.map((transaction) => (
-                        <div key={transaction.id}>
-                            <h3>{transaction.title}</h3>
+
+                        <div
+                            key={transaction.id}
+                            className="glass-card"
+                            style={{ marginBottom: "15px" }}
+                        >
+
+                            <h3>
+                                {transaction.title}
+                            </h3>
 
                             <p>
                                 <strong>Importe:</strong>{" "}
@@ -42,10 +80,26 @@ export default function Transactions() {
                                 {transaction.type}
                             </p>
 
-                            <hr />
+                            <p>
+                                <strong>Fecha:</strong>{" "}
+                                {transaction.transaction_date}
+                            </p>
+
+                            <button
+                                className="danger-btn"
+                                onClick={() =>
+                                    deleteTransaction(
+                                        transaction.id
+                                    )
+                                }
+                            >
+                                🗑 Eliminar
+                            </button>
+
                         </div>
                     ))
                 )}
+
             </div>
         </>
     );
