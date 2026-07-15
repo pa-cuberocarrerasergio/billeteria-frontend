@@ -1,0 +1,37 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Transactions from "./pages/Transactions";
+import SavingGoals from "./pages/SavingGoals";
+import Coach from "./pages/Coach";
+
+function App() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        return <Login />;
+    }
+
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route
+                    path="/transactions"
+                    element={<Transactions />}
+                />
+                <Route
+                    path="/saving-goals"
+                    element={<SavingGoals />}
+                />
+                <Route
+                    path="/coach"
+                    element={<Coach />}
+                />
+            </Routes>
+        </BrowserRouter>
+    );
+}
+
+export default App;
