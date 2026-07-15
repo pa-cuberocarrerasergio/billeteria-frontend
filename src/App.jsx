@@ -8,6 +8,8 @@ import Coach from "./pages/Coach";
 import Profile from "./pages/Profile";
 import CreateTransaction from "./pages/CreateTransaction";
 import CreateSavingGoal from "./pages/CreateSavingGoal";
+import EditTransaction from "./pages/EditTransaction";
+import EditSavingGoal from "./pages/EditSavingGoal";
 
 function App() {
     const token = localStorage.getItem("token");
@@ -43,6 +45,14 @@ function App() {
                 <Route
                     path="/saving-goals/create"
                     element={<CreateSavingGoal />}
+                />
+                <Route
+                    path="/transactions/edit/:id"
+                    element={<EditTransaction />}
+                />
+                <Route
+                    path="/saving-goals/edit/:id"
+                    element={<EditSavingGoal />}
                 />
             </Routes>
         </BrowserRouter>

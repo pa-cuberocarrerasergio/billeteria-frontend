@@ -128,8 +128,13 @@ export default function SavingGoals() {
 
                                 <button
                                     className="edit-btn"
+                                    style={{
+                                        marginRight: "10px"
+                                    }}
                                     onClick={() =>
-                                        editGoal(goal)
+                                        navigate(
+                                            `/saving-goals/edit/${goal.id}`
+                                        )
                                     }
                                 >
                                     ✏️ Editar

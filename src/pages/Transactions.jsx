@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
+
 export default function Transactions() {
 
     const [transactions, setTransactions] = useState([]);
@@ -111,11 +112,14 @@ export default function Transactions() {
                                 }}
                             >
 
-                                <button
+                               <button
                                     className="edit-btn"
+                                    style={{
+                                        marginRight: "10px"
+                                    }}
                                     onClick={() =>
-                                        editTransaction(
-                                            transaction
+                                        navigate(
+                                            `/transactions/edit/${transaction.id}`
                                         )
                                     }
                                 >
