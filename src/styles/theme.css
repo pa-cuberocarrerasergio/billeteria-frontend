@@ -406,3 +406,36 @@ textarea {
 
     resize: vertical;
 }
+
+form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+input,
+select,
+textarea {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(255,255,255,.1);
+
+    background: rgba(255,255,255,.05);
+
+    color: white;
+
+    box-sizing: border-box;
+}
+
+input::placeholder {
+
+    color: #94A3B8;
+}

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import api from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Transactions() {
 
     const [transactions, setTransactions] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadTransactions();
@@ -58,6 +60,15 @@ export default function Transactions() {
             <div className="page-container">
 
                 <h1>Transacciones</h1>
+
+                <button
+                    className="edit-btn"
+                    onClick={() =>
+                        navigate("/transactions/create")
+                    }
+                >
+                    + Nueva Transacción
+                </button>
 
                 {transactions.length === 0 ? (
 
