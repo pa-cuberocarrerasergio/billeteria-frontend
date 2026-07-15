@@ -48,6 +48,13 @@ export default function SavingGoals() {
         }
     };
 
+    const editGoal = (goal) => {
+
+        alert(
+            `Editar objetivo:\n${goal.title}\n\n(Lo implementaremos en el siguiente paso)`
+        );
+    };
+
     return (
         <>
             <Navbar />
@@ -81,7 +88,7 @@ export default function SavingGoals() {
                                     Progreso:
                                 </strong>{" "}
                                 {goal.current_amount} €
-                                /
+                                {" / "}
                                 {goal.target_amount} €
                             </p>
 
@@ -99,14 +106,33 @@ export default function SavingGoals() {
                                 {goal.target_date}
                             </p>
 
-                            <button
-                                className="danger-btn"
-                                onClick={() =>
-                                    deleteGoal(goal.id)
-                                }
+                            <div
+                                style={{
+                                    display: "flex",
+                                    gap: "10px",
+                                    marginTop: "10px",
+                                }}
                             >
-                                🗑 Eliminar
-                            </button>
+
+                                <button
+                                    className="edit-btn"
+                                    onClick={() =>
+                                        editGoal(goal)
+                                    }
+                                >
+                                    ✏️ Editar
+                                </button>
+
+                                <button
+                                    className="danger-btn"
+                                    onClick={() =>
+                                        deleteGoal(goal.id)
+                                    }
+                                >
+                                    🗑 Eliminar
+                                </button>
+
+                            </div>
 
                         </div>
                     ))
