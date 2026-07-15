@@ -31,6 +31,12 @@ export default function Navbar() {
 
             {" | "}
 
+            <Link to="/profile">
+                👤 Perfil
+            </Link>
+
+            {" | "}
+
             <button onClick={logout}>
                 Logout
             </button>

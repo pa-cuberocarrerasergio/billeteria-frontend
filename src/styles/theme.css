@@ -381,3 +381,28 @@ body {
 
     border-radius: 10px;
 }
+
+select,
+textarea {
+
+    width: 100%;
+
+    margin-top: 8px;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(255,255,255,.1);
+
+    background: rgba(255,255,255,.05);
+
+    color: white;
+
+    box-sizing: border-box;
+}
+
+textarea {
+
+    resize: vertical;
+}

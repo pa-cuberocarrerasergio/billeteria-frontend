@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import SavingGoals from "./pages/SavingGoals";
 import Coach from "./pages/Coach";
+import Profile from "./pages/Profile";
 
 function App() {
     const token = localStorage.getItem("token");
@@ -28,6 +29,10 @@ function App() {
                 <Route
                     path="/coach"
                     element={<Coach />}
+                />
+                <Route
+                    path="/profile"
+                    element={<Profile />}
                 />
             </Routes>
         </BrowserRouter>
