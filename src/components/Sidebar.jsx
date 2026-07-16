@@ -10,11 +10,25 @@ import {
 import { Link } from "react-router-dom";
 
 export default function Sidebar() {
+
     return (
+
         <aside className="sidebar">
 
             <div className="logo">
-                BilleterIA
+
+                💵 BilleterIA
+
+                <p
+                    style={{
+                        fontSize: "12px",
+                        color: "#94A3B8",
+                        marginTop: "8px",
+                    }}
+                >
+                    Finanzas inteligentes
+                </p>
+
             </div>
 
             <nav>
@@ -39,17 +53,28 @@ export default function Sidebar() {
                     Billetín IA
                 </Link>
 
-                <Link to="/profile">
-                    <User size={18} />
-                    Perfil
-                </Link>
-
                 <Link to="/achievements">
                     <Trophy size={18} />
                     Logros
                 </Link>
 
+                <Link to="/profile">
+                    <User size={18} />
+                    Perfil
+                </Link>
+
             </nav>
+
+            <div
+                style={{
+                    marginTop: "auto",
+                    paddingTop: "40px",
+                    color: "#94A3B8",
+                    fontSize: "12px",
+                }}
+            >
+                BilleterIA v1.0 Beta
+            </div>
 
         </aside>
     );

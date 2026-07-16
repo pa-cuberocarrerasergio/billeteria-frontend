@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import MainLayout from "../layouts/MainLayout";
 import api from "../services/api";
 
 export default function EditTransaction() {
@@ -78,8 +78,8 @@ export default function EditTransaction() {
     };
 
     return (
-        <>
-            <Navbar />
+        
+            <MainLayout>
 
             <div className="page-container">
 
@@ -186,6 +186,6 @@ export default function EditTransaction() {
                 </div>
 
             </div>
-        </>
+        </MainLayout>
     );
 }

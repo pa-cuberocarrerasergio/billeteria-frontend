@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import MainLayout from "../layouts/MainLayout";
 import api from "../services/api";
 
 export default function EditSavingGoal() {
@@ -62,136 +62,136 @@ export default function EditSavingGoal() {
     };
 
     return (
-        <>
-            <Navbar />
+        
+            <MainLayout>
 
-            <div className="page-container">
+                <div className="page-container">
 
-                <div className="glass-card">
+                    <div className="glass-card">
 
-                    <h1>
-                        Editar Objetivo
-                    </h1>
+                        <h1>
+                            Editar Objetivo
+                        </h1>
 
-                    <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit}>
 
-                        <input
-                            value={form.emoji || ""}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    emoji:
-                                        e.target.value,
-                                })
-                            }
-                        />
+                            <input
+                                value={form.emoji || ""}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        emoji:
+                                            e.target.value,
+                                    })
+                                }
+                            />
 
-                        <input
-                            value={form.title || ""}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    title:
-                                        e.target.value,
-                                })
-                            }
-                        />
+                            <input
+                                value={form.title || ""}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        title:
+                                            e.target.value,
+                                    })
+                                }
+                            />
 
-                        <textarea
-                            rows="4"
-                            value={
-                                form.description ||
-                                ""
-                            }
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    description:
-                                        e.target.value,
-                                })
-                            }
-                        />
+                            <textarea
+                                rows="4"
+                                value={
+                                    form.description ||
+                                    ""
+                                }
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        description:
+                                            e.target.value,
+                                    })
+                                }
+                            />
 
-                        <input
-                            type="number"
-                            value={
-                                form.target_amount ||
-                                ""
-                            }
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    target_amount:
-                                        e.target.value,
-                                })
-                            }
-                        />
+                            <input
+                                type="number"
+                                value={
+                                    form.target_amount ||
+                                    ""
+                                }
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        target_amount:
+                                            e.target.value,
+                                    })
+                                }
+                            />
 
-                        <input
-                            type="number"
-                            value={
-                                form.current_amount ||
-                                ""
-                            }
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    current_amount:
-                                        e.target.value,
-                                })
-                            }
-                        />
+                            <input
+                                type="number"
+                                value={
+                                    form.current_amount ||
+                                    ""
+                                }
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        current_amount:
+                                            e.target.value,
+                                    })
+                                }
+                            />
 
-                        <input
-                            type="date"
-                            value={
-                                form.target_date ||
-                                ""
-                            }
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    target_date:
-                                        e.target.value,
-                                })
-                            }
-                        />
+                            <input
+                                type="date"
+                                value={
+                                    form.target_date ||
+                                    ""
+                                }
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        target_date:
+                                            e.target.value,
+                                    })
+                                }
+                            />
 
-                        <select
-                            value={form.priority}
-                            onChange={(e) =>
-                                setForm({
-                                    ...form,
-                                    priority:
-                                        e.target.value,
-                                })
-                            }
-                        >
-                            <option value="high">
-                                Alta
-                            </option>
+                            <select
+                                value={form.priority}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        priority:
+                                            e.target.value,
+                                    })
+                                }
+                            >
+                                <option value="high">
+                                    Alta
+                                </option>
 
-                            <option value="medium">
-                                Media
-                            </option>
+                                <option value="medium">
+                                    Media
+                                </option>
 
-                            <option value="low">
-                                Baja
-                            </option>
-                        </select>
+                                <option value="low">
+                                    Baja
+                                </option>
+                            </select>
 
-                        <button
-                            type="submit"
-                            className="edit-btn"
-                        >
-                            Guardar cambios
-                        </button>
+                            <button
+                                type="submit"
+                                className="edit-btn"
+                            >
+                                Guardar cambios
+                            </button>
 
-                    </form>
+                        </form>
+
+                    </div>
 
                 </div>
-
-            </div>
-        </>
+            </MainLayout>
     );
 }

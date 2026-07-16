@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import MainLayout from "../layouts/MainLayout";
 
 
 export default function Transactions() {
@@ -55,8 +55,8 @@ export default function Transactions() {
     };
 
     return (
-        <>
-            <Navbar />
+        
+            <MainLayout>
 
             <div className="page-container">
 
@@ -144,6 +144,6 @@ export default function Transactions() {
                 )}
 
             </div>
-        </>
+        </MainLayout>
     );
 }

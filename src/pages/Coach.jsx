@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import Navbar from "../components/Navbar";
+import MainLayout from "../layouts/MainLayout";
 import api from "../services/api";
 
 export default function Coach() {
 
     const [message, setMessage] = useState("");
-
     const [history, setHistory] = useState([]);
-
     const [loading, setLoading] = useState(false);
 
     const messagesEndRef = useRef(null);
@@ -105,113 +103,84 @@ export default function Coach() {
     };
 
     return (
-        <>
-            <Navbar />
 
-            <div style={{ padding: "20px" }}>
+        <MainLayout>
 
-                <h1>Coach IA</h1>
+            <div className="coach-container">
 
-                <div>
+                <div className="glass-card">
+
+                    <h2>💵 Billetín</h2>
+
+                    <p>
+                        Tu coach financiero personal
+                    </p>
+
+                </div>
+
+                <div className="chat-messages">
 
                     {history.map((item) => (
 
                         <div
                             key={item.id}
-                            style={{
-                                marginBottom: "15px",
-                                textAlign:
-                                    item.role === "user"
-                                        ? "right"
-                                        : "left",
-                            }}
+                            className={
+                                item.role === "user"
+                                    ? "user-message"
+                                    : "coach-message"
+                            }
                         >
-                            <div
-                                style={{
-                                    display: "inline-block",
-                                    maxWidth: "75%",
-                                    padding: "12px",
-                                    borderRadius: "10px",
-                                    background:
-                                        item.role === "user"
-                                            ? "#dbeafe"
-                                            : "#f3f4f6",
-                                    whiteSpace:
-                                        "pre-wrap",
-                                }}
-                            >
-                                {item.text}
-                            </div>
+                            {item.text}
                         </div>
                     ))}
 
                     {loading && (
 
-                        <div
-                            style={{
-                                marginBottom: "15px",
-                            }}
-                        >
-                            🤖 Pensando...
+                        <div className="coach-message">
+
+                            💵 Billetín está analizando tus finanzas...
+
                         </div>
                     )}
 
-                    <div
-                        ref={messagesEndRef}
-                    ></div>
+                    <div ref={messagesEndRef}></div>
 
                 </div>
 
                 <form
                     onSubmit={sendMessage}
-                    style={{
-                        marginTop: "20px",
-                    }}
+                    className="chat-input-container"
                 >
+
                     <input
                         type="text"
                         value={message}
                         onChange={(e) =>
-                            setMessage(
-                                e.target.value
-                            )
+                            setMessage(e.target.value)
                         }
-                        placeholder="Pregunta algo a tu coach..."
-                        style={{
-                            width: "75%",
-                            padding: "10px",
-                        }}
+                        placeholder="Pregunta algo a Billetín..."
+                        className="chat-input"
                     />
 
                     <button
                         type="submit"
                         disabled={loading}
-                        style={{
-                            marginLeft: "10px",
-                            padding:
-                                "10px 20px",
-                        }}
+                        className="chat-send-btn"
                     >
                         Enviar
                     </button>
+
                 </form>
 
                 <button
                     onClick={scrollToBottom}
-                    style={{
-                        position: "fixed",
-                        right: "25px",
-                        bottom: "25px",
-                        width: "50px",
-                        height: "50px",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                    }}
+                    className="scroll-bottom-btn"
                 >
                     ↓
                 </button>
 
             </div>
-        </>
+
+        </MainLayout>
     );
 }

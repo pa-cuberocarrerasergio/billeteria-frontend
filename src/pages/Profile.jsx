@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import api from "../services/api";
+import MainLayout from "../layouts/MainLayout";
 
 export default function Profile() {
 
@@ -75,132 +75,132 @@ export default function Profile() {
     };
 
     return (
-        <>
-            <Navbar />
+        
+            <MainLayout>
 
-            <div className="page-container">
+                <div className="page-container">
 
-                <h1>Perfil</h1>
+                    <h1>Perfil</h1>
 
-                {user && (
+                    {user && (
 
-                    <div
-                        className="glass-card"
-                        style={{
-                            marginBottom: "20px",
-                        }}
-                    >
-
-                        <h2>
-                            {user.name}
-                        </h2>
-
-                        <p>
-                            {user.email}
-                        </p>
-
-                    </div>
-                )}
-
-                <div className="glass-card">
-
-                    <h2>
-                        Configuración de Billetín
-                    </h2>
-
-                    <div
-                        style={{
-                            marginTop: "20px",
-                        }}
-                    >
-
-                        <label>
-                            Estilo de conversación
-                        </label>
-
-                        <select
-                            value={
-                                preferences
-                                    .conversation_style
-                            }
-                            onChange={(e) =>
-                                setPreferences({
-                                    ...preferences,
-                                    conversation_style:
-                                        e.target.value,
-                                })
-                            }
-                        >
-                            <option value="motivador">
-                                Motivador
-                            </option>
-
-                            <option value="cercano">
-                                Cercano
-                            </option>
-
-                            <option value="formal">
-                                Formal
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <div
-                        style={{
-                            marginTop: "20px",
-                        }}
-                    >
-
-                        <label>
-                            Contexto personal
-                        </label>
-
-                        <textarea
-                            rows="5"
-                            value={
-                                preferences
-                                    .coach_background
-                            }
-                            onChange={(e) =>
-                                setPreferences({
-                                    ...preferences,
-                                    coach_background:
-                                        e.target.value,
-                                })
-                            }
-                        />
-
-                    </div>
-
-                    <button
-                        className="edit-btn"
-                        style={{
-                            marginTop: "20px",
-                        }}
-                        onClick={
-                            savePreferences
-                        }
-                    >
-                        Guardar preferencias
-                    </button>
-
-                    {saved && (
-
-                        <p
+                        <div
+                            className="glass-card"
                             style={{
-                                color:
-                                    "#22c55e",
+                                marginBottom: "20px",
                             }}
                         >
-                            Preferencias guardadas
-                        </p>
+
+                            <h2>
+                                {user.name}
+                            </h2>
+
+                            <p>
+                                {user.email}
+                            </p>
+
+                        </div>
                     )}
 
-                </div>
+                    <div className="glass-card">
 
-            </div>
-        </>
+                        <h2>
+                            Configuración de Billetín
+                        </h2>
+
+                        <div
+                            style={{
+                                marginTop: "20px",
+                            }}
+                        >
+
+                            <label>
+                                Estilo de conversación
+                            </label>
+
+                            <select
+                                value={
+                                    preferences
+                                        .conversation_style
+                                }
+                                onChange={(e) =>
+                                    setPreferences({
+                                        ...preferences,
+                                        conversation_style:
+                                            e.target.value,
+                                    })
+                                }
+                            >
+                                <option value="motivador">
+                                    Motivador
+                                </option>
+
+                                <option value="cercano">
+                                    Cercano
+                                </option>
+
+                                <option value="formal">
+                                    Formal
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <div
+                            style={{
+                                marginTop: "20px",
+                            }}
+                        >
+
+                            <label>
+                                Contexto personal
+                            </label>
+
+                            <textarea
+                                rows="5"
+                                value={
+                                    preferences
+                                        .coach_background
+                                }
+                                onChange={(e) =>
+                                    setPreferences({
+                                        ...preferences,
+                                        coach_background:
+                                            e.target.value,
+                                    })
+                                }
+                            />
+
+                        </div>
+
+                        <button
+                            className="edit-btn"
+                            style={{
+                                marginTop: "20px",
+                            }}
+                            onClick={
+                                savePreferences
+                            }
+                        >
+                            Guardar preferencias
+                        </button>
+
+                        {saved && (
+
+                            <p
+                                style={{
+                                    color:
+                                        "#22c55e",
+                                }}
+                            >
+                                Preferencias guardadas
+                            </p>
+                        )}
+
+                    </div>
+
+                </div>
+            </MainLayout>
     );
 }
