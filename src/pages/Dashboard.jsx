@@ -45,10 +45,12 @@ export default function Dashboard() {
 
             <div className="dashboard-header">
 
-                <h1>Dashboard</h1>
+                <h1>
+                    👋 Bienvenido a BilleterIA
+                </h1>
 
                 <p>
-                    Bienvenido de nuevo a BilleterIA 👋
+                    Tu centro de control financiero personal
                 </p>
 
             </div>
@@ -56,22 +58,22 @@ export default function Dashboard() {
             <div className="stats-grid">
 
                 <div className="glass-card">
-                    <h3>Balance</h3>
+                    <h3>💰 Balance</h3>
                     <h2>{data.balance.toFixed(2)} €</h2>
                 </div>
 
                 <div className="glass-card">
-                    <h3>Ingresos</h3>
+                    <h3>📈 Ingresos</h3>
                     <h2>{data.income.toFixed(2)} €</h2>
                 </div>
 
                 <div className="glass-card">
-                    <h3>Gastos</h3>
+                    <h3>📉 Gastos</h3>
                     <h2>{data.expense.toFixed(2)} €</h2>
                 </div>
 
                 <div className="glass-card">
-                    <h3>Objetivos</h3>
+                    <h3>🎯 Objetivos</h3>
                     <h2>{data.goals}</h2>
                 </div>
 
@@ -81,15 +83,28 @@ export default function Dashboard() {
 
                 <div className="glass-card">
 
-                    <h3>Objetivo Principal</h3>
+                    <h3>
+                        🎌 Objetivo Principal
+                    </h3>
 
                     {data.mainGoal ? (
                         <>
-                            <h2>{data.mainGoal.title}</h2>
+                            <h2>
+                                {data.mainGoal.emoji}{" "}
+                                {data.mainGoal.title}
+                            </h2>
 
                             <p>
+                                <strong>
+                                    Ahorrado:
+                                </strong>{" "}
                                 {data.mainGoal.current_amount} €
-                                /
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Objetivo:
+                                </strong>{" "}
                                 {data.mainGoal.target_amount} €
                             </p>
 
@@ -104,22 +119,33 @@ export default function Dashboard() {
 
                             </div>
 
-                            <p>
-                                {progress.toFixed(0)}%
+                            <p
+                                style={{
+                                    marginTop: "10px",
+                                }}
+                            >
+                                {progress.toFixed(1)}%
                                 completado
                             </p>
+
                         </>
                     ) : (
-                        <p>No tienes objetivos.</p>
+                        <p>
+                            No tienes objetivos
+                            creados todavía.
+                        </p>
                     )}
 
                 </div>
 
                 <div className="glass-card">
 
-                    <h3>Últimas transacciones</h3>
+                    <h3>
+                        🧾 Últimos movimientos
+                    </h3>
 
-                    {data.latestTransactions.length > 0 ? (
+                    {data.latestTransactions.length >
+                    0 ? (
 
                         data.latestTransactions.map(
                             (transaction) => (
@@ -129,15 +155,43 @@ export default function Dashboard() {
                                     className="transaction-row"
                                 >
 
-                                    <span>
-                                        {transaction.title}
-                                    </span>
+                                    <div>
 
-                                    <span>
-                                        {transaction.type === "expense"
-                                            ? "-"
-                                            : "+"}
-                                        {transaction.amount} €
+                                        <strong>
+                                            {
+                                                transaction.title
+                                            }
+                                        </strong>
+
+                                        <br />
+
+                                        <small>
+                                            {
+                                                transaction.transaction_date
+                                            }
+                                        </small>
+
+                                    </div>
+
+                                    <span
+                                        style={{
+                                            color:
+                                                transaction.type ===
+                                                "income"
+                                                    ? "#22C55E"
+                                                    : "#EF4444",
+                                            fontWeight:
+                                                "bold",
+                                        }}
+                                    >
+                                        {transaction.type ===
+                                        "income"
+                                            ? "+"
+                                            : "-"}
+                                        {
+                                            transaction.amount
+                                        }
+                                        €
                                     </span>
 
                                 </div>
@@ -147,7 +201,8 @@ export default function Dashboard() {
                     ) : (
 
                         <p>
-                            No hay transacciones.
+                            No hay movimientos
+                            registrados.
                         </p>
                     )}
 
