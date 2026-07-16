@@ -7,9 +7,19 @@ import {
     Trophy
 } from "lucide-react";
 
-import { Link } from "react-router-dom";
+import {
+    Link,
+    useLocation
+} from "react-router-dom";
+
+import BilletinAvatar from "./BilletinAvatar";
 
 export default function Sidebar() {
+
+    const location = useLocation();
+
+    const isActive = (path) =>
+        location.pathname === path;
 
     return (
 
@@ -17,63 +27,114 @@ export default function Sidebar() {
 
             <div className="logo">
 
-                💵 BilleterIA
+                <BilletinAvatar size={55} />
 
-                <p
-                    style={{
-                        fontSize: "12px",
-                        color: "#94A3B8",
-                        marginTop: "8px",
-                    }}
-                >
-                    Finanzas inteligentes
-                </p>
+                <div>
+
+                    <div className="logo-title">
+                        BilleterIA
+                    </div>
+
+                    <div className="logo-subtitle">
+                        Finanzas inteligentes
+                    </div>
+
+                </div>
 
             </div>
 
             <nav>
 
-                <Link to="/dashboard">
+                <Link
+                    to="/dashboard"
+                    className={
+                        isActive("/dashboard")
+                            ? "active-link"
+                            : ""
+                    }
+                >
                     <LayoutDashboard size={18} />
                     Dashboard
                 </Link>
 
-                <Link to="/transactions">
+                <Link
+                    to="/transactions"
+                    className={
+                        isActive("/transactions")
+                            ? "active-link"
+                            : ""
+                    }
+                >
                     <Receipt size={18} />
                     Transacciones
                 </Link>
 
-                <Link to="/saving-goals">
+                <Link
+                    to="/saving-goals"
+                    className={
+                        isActive("/saving-goals")
+                            ? "active-link"
+                            : ""
+                    }
+                >
                     <Target size={18} />
                     Objetivos
                 </Link>
 
-                <Link to="/coach">
+                <Link
+                    to="/coach"
+                    className={
+                        isActive("/coach")
+                            ? "active-link"
+                            : ""
+                    }
+                >
                     <Bot size={18} />
                     Billetín IA
                 </Link>
 
-                <Link to="/achievements">
+                <Link
+                    to="/achievements"
+                    className={
+                        isActive("/achievements")
+                            ? "active-link"
+                            : ""
+                    }
+                >
                     <Trophy size={18} />
                     Logros
                 </Link>
 
-                <Link to="/profile">
+                <Link
+                    to="/profile"
+                    className={
+                        isActive("/profile")
+                            ? "active-link"
+                            : ""
+                    }
+                >
                     <User size={18} />
                     Perfil
                 </Link>
 
             </nav>
 
-            <div
-                style={{
-                    marginTop: "auto",
-                    paddingTop: "40px",
-                    color: "#94A3B8",
-                    fontSize: "12px",
-                }}
-            >
-                BilleterIA v1.0 Beta
+            <div className="sidebar-footer">
+
+                <BilletinAvatar size={38} />
+
+                <div>
+
+                    <div className="footer-user">
+                        Usuario
+                    </div>
+
+                    <div className="footer-plan">
+                        Plan Beta
+                    </div>
+
+                </div>
+
             </div>
 
         </aside>

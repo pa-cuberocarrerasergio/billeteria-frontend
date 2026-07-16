@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import api from "../services/api";
+import BilletinAvatar from "../components/BilletinAvatar";
 
 export default function Coach() {
 
@@ -97,9 +98,11 @@ export default function Coach() {
         } catch (error) {
 
             console.error(error);
-        }
 
-        setLoading(false);
+        } finally {
+
+            setLoading(false);
+        }
     };
 
     return (
@@ -108,44 +111,112 @@ export default function Coach() {
 
             <div className="coach-container">
 
+                {/* CABECERA */}
+
                 <div className="glass-card">
 
-                    <h2>💵 Billetín</h2>
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "16px",
+                        }}
+                    >
 
-                    <p>
-                        Tu coach financiero personal
-                    </p>
+                        <BilletinAvatar size={80} />
+
+                        <div>
+
+                            <h2
+                                style={{
+                                    margin: 0,
+                                }}
+                            >
+                                Billetín
+                            </h2>
+
+                            <p
+                                style={{
+                                    margin: 0,
+                                    color: "#94A3B8",
+                                }}
+                            >
+                                Tu coach financiero personal
+                            </p>
+
+                        </div>
+
+                    </div>
 
                 </div>
+
+                {/* CHAT */}
 
                 <div className="chat-messages">
 
                     {history.map((item) => (
 
-                        <div
-                            key={item.id}
-                            className={
-                                item.role === "user"
-                                    ? "user-message"
-                                    : "coach-message"
-                            }
-                        >
-                            {item.text}
-                        </div>
+                        item.role === "user" ? (
+
+                            <div
+                                key={item.id}
+                                className="user-message"
+                            >
+                                {item.text}
+                            </div>
+
+                        ) : (
+
+                            <div
+                                key={item.id}
+                                style={{
+                                    display: "flex",
+                                    gap: "12px",
+                                    alignItems: "flex-start",
+                                    marginBottom: "16px",
+                                }}
+                            >
+
+                                <BilletinAvatar size={40} />
+
+                                <div className="coach-message">
+                                    {item.text}
+                                </div>
+
+                            </div>
+
+                        )
+
                     ))}
 
                     {loading && (
 
-                        <div className="coach-message">
+                        <div
+                            style={{
+                                display: "flex",
+                                gap: "12px",
+                                alignItems: "center",
+                                marginBottom: "16px",
+                            }}
+                        >
 
-                            💵 Billetín está analizando tus finanzas...
+                            <BilletinAvatar size={40} />
+
+                            <div className="coach-message">
+
+                                Billetín está analizando tus finanzas...
+
+                            </div>
 
                         </div>
+
                     )}
 
                     <div ref={messagesEndRef}></div>
 
                 </div>
+
+                {/* INPUT */}
 
                 <form
                     onSubmit={sendMessage}
@@ -171,6 +242,8 @@ export default function Coach() {
                     </button>
 
                 </form>
+
+                {/* BOTÓN SCROLL */}
 
                 <button
                     onClick={scrollToBottom}
