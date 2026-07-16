@@ -3,7 +3,8 @@ import {
     Receipt,
     Target,
     Bot,
-    User
+    User,
+    Trophy
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
@@ -41,6 +42,11 @@ export default function Sidebar() {
                 <Link to="/profile">
                     <User size={18} />
                     Perfil
+                </Link>
+
+                <Link to="/achievements">
+                    <Trophy size={18} />
+                    Logros
                 </Link>
 
             </nav>

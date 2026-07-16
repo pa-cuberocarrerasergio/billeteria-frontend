@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import { getDashboard } from "../services/dashboardService";
+import FinanceChart from "../components/FinanceChart";
 
 export default function Dashboard() {
 
@@ -209,6 +210,11 @@ export default function Dashboard() {
                 </div>
 
             </div>
+
+            <FinanceChart
+                income={data.income}
+                expense={data.expense}
+            />
 
         </MainLayout>
     );
