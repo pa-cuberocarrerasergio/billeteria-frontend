@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import MainLayout from "../layouts/MainLayout";
 import { getDashboard } from "../services/dashboardService";
 import FinanceChart from "../components/FinanceChart";
+import BilletinAvatar from "../components/BilletinAvatar";
 
 export default function Dashboard() {
 
@@ -12,6 +13,7 @@ export default function Dashboard() {
         goals: 0,
         mainGoal: null,
         latestTransactions: [],
+        recommendations: [],
     });
 
     useEffect(() => {
@@ -22,7 +24,8 @@ export default function Dashboard() {
 
         try {
 
-            const response = await getDashboard();
+            const response =
+                await getDashboard();
 
             setData(response);
 
@@ -41,7 +44,22 @@ export default function Dashboard() {
             ) * 100
             : 0;
 
+    const billetinMood =
+        data.balance < 0
+            ? "worried"
+            : progress >= 80
+            ? "happy"
+            : "normal";
+
+    const billetinAdvice =
+        data.balance < 0
+            ? "Tus gastos están superando tus ingresos. Vigila las compras impulsivas."
+            : progress >= 80
+            ? "Estás muy cerca de completar tu objetivo. ¡Sigue así!"
+            : "Mantén constancia en tus ahorros para acelerar tu progreso.";
+
     return (
+
         <MainLayout>
 
             <div className="dashboard-header">
@@ -56,29 +74,148 @@ export default function Dashboard() {
 
             </div>
 
+            {/* STATS */}
+
             <div className="stats-grid">
 
                 <div className="glass-card">
+
                     <h3>💰 Balance</h3>
-                    <h2>{data.balance.toFixed(2)} €</h2>
+
+                    <h2
+                        className={
+                            data.balance >= 0
+                                ? "stat-positive"
+                                : "stat-negative"
+                        }
+                    >
+                        {data.balance.toFixed(2)} €
+                    </h2>
+
                 </div>
 
                 <div className="glass-card">
+
                     <h3>📈 Ingresos</h3>
-                    <h2>{data.income.toFixed(2)} €</h2>
+
+                    <h2 className="stat-positive">
+                        {data.income.toFixed(2)} €
+                    </h2>
+
                 </div>
 
                 <div className="glass-card">
+
                     <h3>📉 Gastos</h3>
-                    <h2>{data.expense.toFixed(2)} €</h2>
+
+                    <h2 className="stat-negative">
+                        {data.expense.toFixed(2)} €
+                    </h2>
+
                 </div>
 
                 <div className="glass-card">
+
                     <h3>🎯 Objetivos</h3>
+
                     <h2>{data.goals}</h2>
+
                 </div>
 
             </div>
+
+            {/* BILLETIN */}
+
+            <div
+                className="glass-card"
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "20px",
+                    marginBottom: "24px",
+                }}
+            >
+
+                <BilletinAvatar
+                    size={80}
+                    mood={billetinMood}
+                />
+
+                <div>
+
+                    <h3
+                        style={{
+                            marginBottom: "8px",
+                        }}
+                    >
+                        💵 Consejo de Billetín
+                    </h3>
+
+                    <p
+                        style={{
+                            margin: 0,
+                            color: "#94A3B8",
+                        }}
+                    >
+                        {billetinAdvice}
+                    </p>
+
+                </div>
+
+            </div>
+
+            {/* RECOMENDACIONES */}
+
+            <div
+                className="glass-card"
+                style={{
+                    marginBottom: "24px",
+                }}
+            >
+
+                <h3>
+                    🧠 Recomendaciones de Billetín
+                </h3>
+
+                {data.recommendations?.length > 0 ? (
+
+                    data.recommendations.map(
+                        (
+                            recommendation,
+                            index
+                        ) => (
+
+                            <p
+                                key={index}
+                                style={{
+                                    marginBottom:
+                                        "12px",
+                                }}
+                            >
+                                {recommendation}
+                            </p>
+
+                        )
+                    )
+
+                ) : (
+
+                    <p>
+                        No hay recomendaciones disponibles.
+                    </p>
+
+                )}
+
+            </div>
+
+            {/* CHART */}
+
+            <FinanceChart
+                income={data.income}
+                expense={data.expense}
+            />
+
+            {/* LOWER GRID */}
 
             <div className="dashboard-bottom">
 
@@ -89,7 +226,9 @@ export default function Dashboard() {
                     </h3>
 
                     {data.mainGoal ? (
+
                         <>
+
                             <h2>
                                 {data.mainGoal.emoji}{" "}
                                 {data.mainGoal.title}
@@ -130,11 +269,13 @@ export default function Dashboard() {
                             </p>
 
                         </>
+
                     ) : (
+
                         <p>
-                            No tienes objetivos
-                            creados todavía.
+                            No tienes objetivos creados.
                         </p>
+
                     )}
 
                 </div>
@@ -145,11 +286,12 @@ export default function Dashboard() {
                         🧾 Últimos movimientos
                     </h3>
 
-                    {data.latestTransactions.length >
-                    0 ? (
+                    {data.latestTransactions.length > 0 ? (
 
                         data.latestTransactions.map(
-                            (transaction) => (
+                            (
+                                transaction
+                            ) => (
 
                                 <div
                                     key={transaction.id}
@@ -182,7 +324,7 @@ export default function Dashboard() {
                                                     ? "#22C55E"
                                                     : "#EF4444",
                                             fontWeight:
-                                                "bold",
+                                                "700",
                                         }}
                                     >
                                         {transaction.type ===
@@ -196,26 +338,23 @@ export default function Dashboard() {
                                     </span>
 
                                 </div>
+
                             )
                         )
 
                     ) : (
 
                         <p>
-                            No hay movimientos
-                            registrados.
+                            No hay movimientos registrados.
                         </p>
+
                     )}
 
                 </div>
 
             </div>
 
-            <FinanceChart
-                income={data.income}
-                expense={data.expense}
-            />
-
         </MainLayout>
+
     );
 }

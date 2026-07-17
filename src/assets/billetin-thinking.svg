@@ -1,0 +1,48 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+
+        <linearGradient id="billGradient" x1="0" y1="0" x2="256" y2="256">
+            <stop offset="0%" stop-color="#4FD1C5"></stop>
+            <stop offset="100%" stop-color="#7C3AED"></stop>
+        </linearGradient>
+
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="8" result="blur"></feGaussianBlur>
+            <feMerge>
+                <feMergeNode in="blur"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+
+    </defs>
+
+    <rect x="28" y="48" width="200" height="140" rx="32" fill="url(#billGradient)" filter="url(#glow)"></rect>
+
+    <rect x="40" y="60" width="176" height="116" rx="24" stroke="white" stroke-opacity="0.25" stroke-width="2"></rect>
+
+    <!-- ceja levantada -->
+
+    <line x1="80" y1="92" x2="105" y2="88" stroke="white" stroke-width="4" stroke-linecap="round"></line>
+
+    <!-- ojos -->
+
+    <circle cx="95" cy="110" r="10" fill="white"></circle>
+    <circle cx="161" cy="110" r="10" fill="white"></circle>
+
+    <!-- pupilas arriba -->
+
+    <circle cx="99" cy="105" r="4" fill="#0B1220"></circle>
+    <circle cx="165" cy="105" r="4" fill="#0B1220"></circle>
+
+    <!-- boca pensativa -->
+
+    <path d="M108 150 Q128 145 148 150" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"></path>
+
+    <circle cx="128" cy="118" r="28" stroke="white" stroke-opacity="0.15" stroke-width="3"></circle>
+
+    <text x="128" y="128" text-anchor="middle" font-size="22" font-weight="700" fill="white">
+        €
+    </text>
+
+</svg>

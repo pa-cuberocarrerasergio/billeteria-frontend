@@ -9,7 +9,18 @@ export default function Coach() {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    const [avatarMood, setAvatarMood] =
+        useState("normal");
+
     const messagesEndRef = useRef(null);
+
+    const quickPrompts = [
+        "¿Cuánto puedo ahorrar este mes?",
+        "Analiza mis gastos",
+        "¿Voy bien con mis objetivos?",
+        "¿En qué gasto más dinero?",
+        "Dame un consejo financiero",
+    ];
 
     useEffect(() => {
         loadHistory();
@@ -24,6 +35,11 @@ export default function Coach() {
         messagesEndRef.current?.scrollIntoView({
             behavior: "smooth",
         });
+    };
+
+    const handleQuickPrompt = (prompt) => {
+
+        setMessage(prompt);
     };
 
     const loadHistory = async () => {
@@ -41,12 +57,21 @@ export default function Coach() {
                     id: `${item.id}-user`,
                     role: "user",
                     text: item.message,
+                    time: new Date().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    }),
                 });
 
                 formattedHistory.push({
                     id: `${item.id}-coach`,
                     role: "coach",
                     text: item.response,
+                    mood: item.mood || "normal",
+                    time: new Date().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    }),
                 });
             });
 
@@ -74,10 +99,16 @@ export default function Coach() {
                 id: Date.now(),
                 role: "user",
                 text: userMessage,
+                time: new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                }),
             },
         ]);
 
         setLoading(true);
+
+        setAvatarMood("thinking");
 
         try {
 
@@ -86,18 +117,32 @@ export default function Coach() {
                     message: userMessage,
                 });
 
+            const reply =
+                response.data.reply;
+
+            setAvatarMood(
+                response.data.mood || "normal"
+            );
+
             setHistory((prev) => [
                 ...prev,
                 {
                     id: Date.now() + 1,
                     role: "coach",
-                    text: response.data.reply,
+                    text: reply,
+                    mood: response.data.mood || "normal",
+                    time: new Date().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    }),
                 },
             ]);
 
         } catch (error) {
 
             console.error(error);
+
+            setAvatarMood("worried");
 
         } finally {
 
@@ -111,48 +156,55 @@ export default function Coach() {
 
             <div className="coach-container">
 
-                {/* CABECERA */}
+                {/* HEADER */}
 
-                <div className="glass-card">
+                <div className="glass-card coach-header">
 
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "16px",
-                        }}
-                    >
+                    <BilletinAvatar
+                        size={80}
+                        mood={avatarMood}
+                    />
 
-                        <BilletinAvatar size={80} />
+                    <div>
 
-                        <div>
+                        <h2>Billetín IA</h2>
 
-                            <h2
-                                style={{
-                                    margin: 0,
-                                }}
-                            >
-                                Billetín
-                            </h2>
-
-                            <p
-                                style={{
-                                    margin: 0,
-                                    color: "#94A3B8",
-                                }}
-                            >
-                                Tu coach financiero personal
-                            </p>
-
-                        </div>
+                        <p>
+                            Tu coach financiero personal
+                        </p>
 
                     </div>
 
                 </div>
 
-                {/* CHAT */}
+                {/* MENSAJES */}
 
                 <div className="chat-messages">
+
+                    {history.length === 0 && !loading && (
+
+                        <div className="welcome-card">
+
+                            <BilletinAvatar
+                                size={90}
+                                mood={avatarMood}
+                            />
+
+                            <h2>
+                                Hola 👋 Soy Billetín
+                            </h2>
+
+                            <p>
+                                Puedo ayudarte a ahorrar,
+                                analizar gastos,
+                                planificar objetivos y
+                                mejorar tus finanzas
+                                personales.
+                            </p>
+
+                        </div>
+
+                    )}
 
                     {history.map((item) => (
 
@@ -160,27 +212,47 @@ export default function Coach() {
 
                             <div
                                 key={item.id}
-                                className="user-message"
+                                className="user-message-wrapper"
                             >
-                                {item.text}
+
+                                <div
+                                    className="user-message"
+                                >
+                                    {item.text}
+                                </div>
+
+                                <small>
+                                    {item.time}
+                                </small>
+
                             </div>
 
                         ) : (
 
                             <div
                                 key={item.id}
-                                style={{
-                                    display: "flex",
-                                    gap: "12px",
-                                    alignItems: "flex-start",
-                                    marginBottom: "16px",
-                                }}
+                                className="coach-row"
                             >
 
-                                <BilletinAvatar size={40} />
+                                <BilletinAvatar
+                                    size={40}
+                                    mood={item.mood || "normal"}
+                                />
 
-                                <div className="coach-message">
-                                    {item.text}
+                                <div>
+
+                                    <div
+                                        className="coach-message"
+                                    >
+                                        {item.text}
+                                    </div>
+
+                                    <small
+                                        className="message-time"
+                                    >
+                                        {item.time}
+                                    </small>
+
                                 </div>
 
                             </div>
@@ -191,20 +263,28 @@ export default function Coach() {
 
                     {loading && (
 
-                        <div
-                            style={{
-                                display: "flex",
-                                gap: "12px",
-                                alignItems: "center",
-                                marginBottom: "16px",
-                            }}
-                        >
+                        <div className="coach-row">
 
-                            <BilletinAvatar size={40} />
+                            <BilletinAvatar
+                                size={40}
+                                mood="thinking"
+                            />
 
-                            <div className="coach-message">
+                            <div
+                                className="coach-message"
+                            >
 
-                                Billetín está analizando tus finanzas...
+                                <span
+                                    className="typing-dot"
+                                ></span>
+
+                                <span
+                                    className="typing-dot"
+                                ></span>
+
+                                <span
+                                    className="typing-dot"
+                                ></span>
 
                             </div>
 
@@ -212,7 +292,30 @@ export default function Coach() {
 
                     )}
 
-                    <div ref={messagesEndRef}></div>
+                    <div
+                        ref={messagesEndRef}
+                    ></div>
+
+                </div>
+
+                {/* QUICK PROMPTS */}
+
+                <div className="quick-prompts">
+
+                    {quickPrompts.map((prompt) => (
+
+                        <button
+                            key={prompt}
+                            type="button"
+                            className="quick-prompt-btn"
+                            onClick={() =>
+                                handleQuickPrompt(prompt)
+                            }
+                        >
+                            {prompt}
+                        </button>
+
+                    ))}
 
                 </div>
 
@@ -227,7 +330,9 @@ export default function Coach() {
                         type="text"
                         value={message}
                         onChange={(e) =>
-                            setMessage(e.target.value)
+                            setMessage(
+                                e.target.value
+                            )
                         }
                         placeholder="Pregunta algo a Billetín..."
                         className="chat-input"
@@ -242,15 +347,6 @@ export default function Coach() {
                     </button>
 
                 </form>
-
-                {/* BOTÓN SCROLL */}
-
-                <button
-                    onClick={scrollToBottom}
-                    className="scroll-bottom-btn"
-                >
-                    ↓
-                </button>
 
             </div>
 

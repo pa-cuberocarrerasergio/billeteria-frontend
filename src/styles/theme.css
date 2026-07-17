@@ -761,3 +761,173 @@ input::placeholder {
         transform: translateY(0);
     }
 }
+
+.coach-header {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+.coach-header h2 {
+
+    margin: 0;
+}
+
+.coach-header p {
+
+    margin: 5px 0 0 0;
+
+    color: var(--text-muted);
+}
+
+.welcome-card {
+
+    text-align: center;
+
+    padding: 40px;
+
+    margin: auto;
+
+    max-width: 500px;
+}
+
+.welcome-card h2 {
+
+    margin-top: 20px;
+}
+
+.welcome-card p {
+
+    color: var(--text-muted);
+
+    line-height: 1.6;
+}
+
+.coach-row {
+
+    display: flex;
+
+    gap: 12px;
+
+    align-items: flex-start;
+}
+
+.user-message-wrapper {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+}
+
+.message-time,
+.user-message-wrapper small {
+
+    margin-top: 4px;
+
+    color: #94A3B8;
+
+    font-size: 11px;
+}
+
+.typing-dot {
+
+    display: inline-block;
+
+    width: 8px;
+
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    margin-right: 4px;
+
+    animation: typing 1s infinite;
+}
+
+.typing-dot:nth-child(2) {
+
+    animation-delay: .2s;
+}
+
+.typing-dot:nth-child(3) {
+
+    animation-delay: .4s;
+}
+
+@keyframes typing {
+
+    0%,
+    100% {
+        opacity: .3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.achievements-summary {
+
+    margin-bottom: 24px;
+}
+
+.achievement-card {
+
+    transition: all .3s ease;
+}
+
+.achievement-card:hover {
+
+    transform: translateY(-4px);
+}
+
+.achievement-card h3 {
+
+    margin-bottom: 10px;
+}
+
+.quick-prompts {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    padding: 15px 20px;
+}
+
+.quick-prompt-btn {
+
+    background: rgba(255,255,255,.05);
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    color: white;
+
+    border-radius: 999px;
+
+    padding: 10px 16px;
+
+    cursor: pointer;
+
+    transition: .25s ease;
+}
+
+.quick-prompt-btn:hover {
+
+    background: rgba(79,209,197,.15);
+
+    border-color: rgba(79,209,197,.4);
+
+    transform: translateY(-2px);
+}
