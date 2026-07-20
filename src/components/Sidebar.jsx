@@ -4,7 +4,8 @@ import {
     Target,
     Bot,
     User,
-    Trophy
+    Trophy,
+    Home,
 } from "lucide-react";
 
 import {
@@ -18,8 +19,23 @@ export default function Sidebar() {
 
     const location = useLocation();
 
+    const isDemo = location.pathname.startsWith("/demo");
+
     const isActive = (path) =>
         location.pathname === path;
+
+    const navLinks = isDemo ? [
+        { to: "/demo/dashboard", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+        { to: "/demo/transactions", icon: <Receipt size={18} />, label: "Transacciones" },
+        { to: "/demo/coach", icon: <Bot size={18} />, label: "Billetín IA" },
+    ] : [
+        { to: "/dashboard", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
+        { to: "/transactions", icon: <Receipt size={18} />, label: "Transacciones" },
+        { to: "/saving-goals", icon: <Target size={18} />, label: "Objetivos" },
+        { to: "/coach", icon: <Bot size={18} />, label: "Billetín IA" },
+        { to: "/achievements", icon: <Trophy size={18} />, label: "Logros" },
+        { to: "/profile", icon: <User size={18} />, label: "Perfil" },
+    ];
 
     return (
 
@@ -36,86 +52,55 @@ export default function Sidebar() {
                     </div>
 
                     <div className="logo-subtitle">
-                        Finanzas inteligentes
+                        {isDemo ? "Modo Demo" : "Finanzas inteligentes"}
                     </div>
 
                 </div>
 
             </div>
 
+            {/* Banner demo en el sidebar */}
+            {isDemo && (
+                <div style={{
+                    background: "rgba(124,58,237,.12)",
+                    border: "1px solid rgba(124,58,237,.25)",
+                    borderRadius: 10,
+                    padding: "10px 12px",
+                    marginBottom: 16,
+                    fontSize: 12,
+                    color: "#a78bfa",
+                    textAlign: "center",
+                }}>
+                    🚀 Vista Demo<br />
+                    <Link
+                        to="/login"
+                        style={{ color: "#4FD1C5", fontWeight: 600, textDecoration: "none" }}
+                    >
+                        Regístrate gratis →
+                    </Link>
+                </div>
+            )}
+
             <nav>
 
-                <Link
-                    to="/dashboard"
-                    className={
-                        isActive("/dashboard")
-                            ? "active-link"
-                            : ""
-                    }
-                >
-                    <LayoutDashboard size={18} />
-                    Dashboard
-                </Link>
+                {navLinks.map(({ to, icon, label }) => (
+                    <Link
+                        key={to}
+                        to={to}
+                        className={isActive(to) ? "active-link" : ""}
+                    >
+                        {icon}
+                        {label}
+                    </Link>
+                ))}
 
-                <Link
-                    to="/transactions"
-                    className={
-                        isActive("/transactions")
-                            ? "active-link"
-                            : ""
-                    }
-                >
-                    <Receipt size={18} />
-                    Transacciones
-                </Link>
-
-                <Link
-                    to="/saving-goals"
-                    className={
-                        isActive("/saving-goals")
-                            ? "active-link"
-                            : ""
-                    }
-                >
-                    <Target size={18} />
-                    Objetivos
-                </Link>
-
-                <Link
-                    to="/coach"
-                    className={
-                        isActive("/coach")
-                            ? "active-link"
-                            : ""
-                    }
-                >
-                    <Bot size={18} />
-                    Billetín IA
-                </Link>
-
-                <Link
-                    to="/achievements"
-                    className={
-                        isActive("/achievements")
-                            ? "active-link"
-                            : ""
-                    }
-                >
-                    <Trophy size={18} />
-                    Logros
-                </Link>
-
-                <Link
-                    to="/profile"
-                    className={
-                        isActive("/profile")
-                            ? "active-link"
-                            : ""
-                    }
-                >
-                    <User size={18} />
-                    Perfil
-                </Link>
+                {/* Link a la landing en modo demo */}
+                {isDemo && (
+                    <Link to="/" style={{ marginTop: 8 }}>
+                        <Home size={18} />
+                        Volver al inicio
+                    </Link>
+                )}
 
             </nav>
 
@@ -126,11 +111,11 @@ export default function Sidebar() {
                 <div>
 
                     <div className="footer-user">
-                        Usuario
+                        {isDemo ? "Visitante Demo" : "Usuario"}
                     </div>
 
                     <div className="footer-plan">
-                        Plan Beta
+                        {isDemo ? "Sin cuenta" : "Plan Beta"}
                     </div>
 
                 </div>

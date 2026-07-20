@@ -11,55 +11,63 @@ import CreateSavingGoal from "./pages/CreateSavingGoal";
 import EditTransaction from "./pages/EditTransaction";
 import EditSavingGoal from "./pages/EditSavingGoal";
 import Achievements from "./pages/Achievements";
+import LandingPage from "./pages/LandingPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import DemoDashboard from "./pages/DemoDashboard";
+import DemoTransactions from "./pages/DemoTransactions";
+import DemoCoach from "./pages/DemoCoach";
 
 function App() {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-        return <Login />;
-    }
+    
 
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/" element={<LandingPage />}/>
+                <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute> } />
                 <Route
                     path="/transactions"
-                    element={<Transactions />}
+                    element={<ProtectedRoute><Transactions /></ProtectedRoute>}
                 />
                 <Route
                     path="/saving-goals"
-                    element={<SavingGoals />}
+                    element={<ProtectedRoute><SavingGoals /></ProtectedRoute>}
                 />
                 <Route
                     path="/coach"
-                    element={<Coach />}
+                    element={<ProtectedRoute><Coach /></ProtectedRoute>}
                 />
                 <Route
                     path="/profile"
-                    element={<Profile />}
+                    element={<ProtectedRoute><Profile /></ProtectedRoute>}
                 />
                 <Route
                     path="/transactions/create"
-                    element={<CreateTransaction />}
+                    element={<ProtectedRoute><CreateTransaction /></ProtectedRoute>}
                 />
                 <Route
                     path="/saving-goals/create"
-                    element={<CreateSavingGoal />}
+                    element={<ProtectedRoute><CreateSavingGoal /></ProtectedRoute>}
                 />
                 <Route
                     path="/transactions/edit/:id"
-                    element={<EditTransaction />}
+                    element={<ProtectedRoute><EditTransaction /></ProtectedRoute>}
                 />
                 <Route
                     path="/saving-goals/edit/:id"
-                    element={<EditSavingGoal />}
+                    element={<ProtectedRoute><EditSavingGoal /></ProtectedRoute>}
                 />
                 <Route
                     path="/achievements"
-                    element={<Achievements />}
+                    element={<ProtectedRoute><Achievements /></ProtectedRoute>}
                 />
+                <Route path="/login" element={<Login />} />
+                <Route path="/demo/dashboard"
+                    element={<DemoDashboard />} />
+                <Route path="/demo/transactions"
+                    element={<DemoTransactions />} />
+                <Route path="/demo/coach"
+                    element={<DemoCoach />} />
             </Routes>
         </BrowserRouter>
     );
