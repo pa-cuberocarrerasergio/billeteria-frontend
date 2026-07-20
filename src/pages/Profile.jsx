@@ -92,7 +92,7 @@ export default function Profile() {
                         >
 
                             <h2>
-                                {user.name}
+                                {user.nickname}
                             </h2>
 
                             <p>

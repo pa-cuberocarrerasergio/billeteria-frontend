@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import BilletinAvatar from "../components/BilletinAvatar";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
@@ -27,9 +28,47 @@ export default function Login() {
         }
     };
 
-    const handleGoogleLogin = () => {
-        alert("El inicio de sesión con Google no está implementado en esta demo. Por favor, accede como Evaluador.");
-    };
+   const googleLogin = useGoogleLogin({
+
+        onSuccess: async (tokenResponse) => {
+
+            try {
+
+                const response = await api.post(
+                    "/google-login",
+                    {
+                        access_token:
+                            tokenResponse.access_token
+                    }
+                );
+
+                localStorage.setItem(
+                    "token",
+                    response.data.token
+                );
+
+                navigate("/dashboard");
+
+            } catch (error) {
+
+                console.error(
+                    "Error Google Login:",
+                    error.response?.data || error
+                );
+
+                setError(
+                    "No se pudo iniciar sesión con Google"
+                );
+            }
+        },
+
+        onError: () => {
+
+            setError(
+                "Error al iniciar sesión con Google"
+            );
+        }
+    });
 
     return (
         <div className="login-page-container">
@@ -86,7 +125,7 @@ export default function Login() {
                         
                         <button 
                             className="btn-professional-google" 
-                            onClick={handleGoogleLogin}
+                            onClick={() => googleLogin()}
                             disabled={loading}
                             type="button"
                         >

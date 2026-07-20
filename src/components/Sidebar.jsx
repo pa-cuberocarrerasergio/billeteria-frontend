@@ -1,41 +1,99 @@
-import {
-    LayoutDashboard,
-    Receipt,
-    Target,
-    Bot,
-    User,
-    Trophy,
-    Home,
-} from "lucide-react";
-
-import {
-    Link,
-    useLocation
-} from "react-router-dom";
-
+import { LayoutDashboard, Receipt, Target, Bot, User, Trophy, Home, } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import api from "../services/api";
 import BilletinAvatar from "./BilletinAvatar";
 
 export default function Sidebar() {
 
     const location = useLocation();
 
-    const isDemo = location.pathname.startsWith("/demo");
+    const [user, setUser] = useState(null);
+
+    const isDemo =
+        location.pathname.startsWith("/demo");
+
+    useEffect(() => {
+
+        if (isDemo) return;
+
+        const loadUser = async () => {
+
+            try {
+
+                const response =
+                    await api.get("/user");
+
+                setUser(response.data);
+
+            } catch (error) {
+
+                console.error(
+                    "Error loading user:",
+                    error
+                );
+
+            }
+
+        };
+
+        loadUser();
+
+    }, [isDemo]);
 
     const isActive = (path) =>
         location.pathname === path;
 
-    const navLinks = isDemo ? [
-        { to: "/demo/dashboard", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
-        { to: "/demo/transactions", icon: <Receipt size={18} />, label: "Transacciones" },
-        { to: "/demo/coach", icon: <Bot size={18} />, label: "Billetín IA" },
-    ] : [
-        { to: "/dashboard", icon: <LayoutDashboard size={18} />, label: "Dashboard" },
-        { to: "/transactions", icon: <Receipt size={18} />, label: "Transacciones" },
-        { to: "/saving-goals", icon: <Target size={18} />, label: "Objetivos" },
-        { to: "/coach", icon: <Bot size={18} />, label: "Billetín IA" },
-        { to: "/achievements", icon: <Trophy size={18} />, label: "Logros" },
-        { to: "/profile", icon: <User size={18} />, label: "Perfil" },
-    ];
+    const navLinks = isDemo
+        ? [
+              {
+                  to: "/demo/dashboard",
+                  icon: <LayoutDashboard size={18} />,
+                  label: "Dashboard",
+              },
+              {
+                  to: "/demo/transactions",
+                  icon: <Receipt size={18} />,
+                  label: "Transacciones",
+              },
+              {
+                  to: "/demo/coach",
+                  icon: <Bot size={18} />,
+                  label: "Billetín IA",
+              },
+          ]
+        : [
+              {
+                  to: "/dashboard",
+                  icon: <LayoutDashboard size={18} />,
+                  label: "Dashboard",
+              },
+              {
+                  to: "/transactions",
+                  icon: <Receipt size={18} />,
+                  label: "Transacciones",
+              },
+              {
+                  to: "/saving-goals",
+                  icon: <Target size={18} />,
+                  label: "Objetivos",
+              },
+              {
+                  to: "/coach",
+                  icon: <Bot size={18} />,
+                  label: "Billetín IA",
+              },
+              {
+                  to: "/achievements",
+                  icon: <Trophy size={18} />,
+                  label: "Logros",
+              },
+              {
+                  to: "/profile",
+                  icon: <User size={18} />,
+                  label: "Perfil",
+              },
+          ];
 
     return (
 
@@ -52,54 +110,88 @@ export default function Sidebar() {
                     </div>
 
                     <div className="logo-subtitle">
-                        {isDemo ? "Modo Demo" : "Finanzas inteligentes"}
+                        {
+                            isDemo
+                                ? "Modo Demo"
+                                : "Finanzas inteligentes"
+                        }
                     </div>
 
                 </div>
 
             </div>
 
-            {/* Banner demo en el sidebar */}
             {isDemo && (
-                <div style={{
-                    background: "rgba(124,58,237,.12)",
-                    border: "1px solid rgba(124,58,237,.25)",
-                    borderRadius: 10,
-                    padding: "10px 12px",
-                    marginBottom: 16,
-                    fontSize: 12,
-                    color: "#a78bfa",
-                    textAlign: "center",
-                }}>
-                    🚀 Vista Demo<br />
+
+                <div
+                    style={{
+                        background:
+                            "rgba(124,58,237,.12)",
+                        border:
+                            "1px solid rgba(124,58,237,.25)",
+                        borderRadius: 10,
+                        padding: "10px 12px",
+                        marginBottom: 16,
+                        fontSize: 12,
+                        color: "#a78bfa",
+                        textAlign: "center",
+                    }}
+                >
+                    🚀 Vista Demo
+                    <br />
+
                     <Link
                         to="/login"
-                        style={{ color: "#4FD1C5", fontWeight: 600, textDecoration: "none" }}
+                        style={{
+                            color: "#4FD1C5",
+                            fontWeight: 600,
+                            textDecoration: "none",
+                        }}
                     >
                         Regístrate gratis →
                     </Link>
+
                 </div>
+
             )}
 
             <nav>
 
-                {navLinks.map(({ to, icon, label }) => (
-                    <Link
-                        key={to}
-                        to={to}
-                        className={isActive(to) ? "active-link" : ""}
-                    >
-                        {icon}
-                        {label}
-                    </Link>
-                ))}
+                {navLinks.map(
+                    ({
+                        to,
+                        icon,
+                        label
+                    }) => (
 
-                {/* Link a la landing en modo demo */}
+                        <Link
+                            key={to}
+                            to={to}
+                            className={
+                                isActive(to)
+                                    ? "active-link"
+                                    : ""
+                            }
+                        >
+                            {icon}
+                            {label}
+                        </Link>
+
+                    )
+                )}
+
                 {isDemo && (
-                    <Link to="/" style={{ marginTop: 8 }}>
+
+                    <Link
+                        to="/"
+                        style={{
+                            marginTop: 8,
+                        }}
+                    >
                         <Home size={18} />
                         Volver al inicio
                     </Link>
+
                 )}
 
             </nav>
@@ -111,11 +203,23 @@ export default function Sidebar() {
                 <div>
 
                     <div className="footer-user">
-                        {isDemo ? "Visitante Demo" : "Usuario"}
+
+                        {
+                            isDemo
+                                ? "Visitante Demo"
+                                : user?.nickname || "Usuario"
+                        }
+
                     </div>
 
                     <div className="footer-plan">
-                        {isDemo ? "Sin cuenta" : "Plan Beta"}
+
+                        {
+                            isDemo
+                                ? "Sin cuenta"
+                                : "Plan Beta"
+                        }
+
                     </div>
 
                 </div>
@@ -123,5 +227,6 @@ export default function Sidebar() {
             </div>
 
         </aside>
+
     );
 }
