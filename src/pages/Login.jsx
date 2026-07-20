@@ -3,11 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import BilletinAvatar from "../components/BilletinAvatar";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const { setUser } = useAuth();
 
     const handleEvaluatorLogin = async () => {
         setLoading(true);
@@ -20,6 +22,8 @@ export default function Login() {
             });
 
             localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            setUser(response.data.user);
             window.location.href = "/dashboard";
         } catch (err) {
             console.error(err);
@@ -42,11 +46,9 @@ export default function Login() {
                     }
                 );
 
-                localStorage.setItem(
-                    "token",
-                    response.data.token
-                );
-
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("user", JSON.stringify(response.data.user));
+                setUser(response.data.user);
                 navigate("/dashboard");
 
             } catch (error) {

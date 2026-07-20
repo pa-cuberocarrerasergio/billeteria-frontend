@@ -1,45 +1,13 @@
 import { LayoutDashboard, Receipt, Target, Bot, User, Trophy, Home, } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import api from "../services/api";
 import BilletinAvatar from "./BilletinAvatar";
+import { useAuth } from "../context/AuthContext";
 
 export default function Sidebar() {
 
     const location = useLocation();
-
-    const [user, setUser] = useState(null);
-
-    const isDemo =
-        location.pathname.startsWith("/demo");
-
-    useEffect(() => {
-
-        if (isDemo) return;
-
-        const loadUser = async () => {
-
-            try {
-
-                const response =
-                    await api.get("/user");
-
-                setUser(response.data);
-
-            } catch (error) {
-
-                console.error(
-                    "Error loading user:",
-                    error
-                );
-
-            }
-
-        };
-
-        loadUser();
-
-    }, [isDemo]);
+    const { user } = useAuth();
+    const isDemo = location.pathname.startsWith("/demo");
 
     const isActive = (path) =>
         location.pathname === path;
