@@ -48,113 +48,168 @@ export default function CreateSavingGoal() {
                             Nuevo Objetivo
                         </h1>
 
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px", textAlign: "left" }}>
 
-                            <input
-                                type="text"
-                                placeholder="Emoji"
-                                value={form.emoji}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        emoji: e.target.value,
-                                    })
-                                }
-                            />
+                            <div>
+                                <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>Elige un emoji</label>
 
-                            <input
-                                type="text"
-                                placeholder="Título"
-                                value={form.title}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        title: e.target.value,
-                                    })
-                                }
-                            />
+                                {/* Preview del emoji seleccionado */}
+                                <div style={{ textAlign: "center", fontSize: "52px", marginBottom: "10px", lineHeight: 1 }}>
+                                    {form.emoji}
+                                </div>
 
-                            <textarea
-                                rows="4"
-                                placeholder="Descripción"
-                                value={form.description}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        description: e.target.value,
-                                    })
-                                }
-                            />
+                                {/* Grupos de emojis */}
+                                {[
+                                    {
+                                        label: "🚗 Vehículos",
+                                        emojis: ["🚗", "🏎️", "🚙", "🛻", "🏍️", "🚐", "✈️", "🚤", "⛵", "🛥️", "🚁", "🛵"]
+                                    },
+                                    {
+                                        label: "🏠 Hogar",
+                                        emojis: ["🏠", "🏡", "🏗️", "🏢", "🛋️", "🪟", "🏊", "🪴", "🛁", "🔑", "🪣", "🏚️"]
+                                    },
+                                    {
+                                        label: "🌴 Viajes & Ocio",
+                                        emojis: ["🌴", "🏖️", "🌊", "⛷️", "🎿", "🗺️", "🧳", "🌍", "🗼", "🎡", "🎢", "🏕️"]
+                                    },
+                                    {
+                                        label: "💻 Tecnología",
+                                        emojis: ["💻", "📱", "🖥️", "🎮", "⌚", "📷", "🎧", "📺", "🖨️", "💾", "🕹️", "🔋"]
+                                    },
+                                    {
+                                        label: "🎓 Formación & Otros",
+                                        emojis: ["🎓", "📚", "🏋️", "💍", "💎", "🎸", "🎨", "🍽️", "🎯", "🌟", "💰", "🏆"]
+                                    }
+                                ].map((group) => (
+                                    <div key={group.label} style={{ marginBottom: "10px" }}>
+                                        <p style={{ margin: "0 0 6px 0", fontSize: "12px", color: "var(--text-h)", fontWeight: "bold" }}>
+                                            {group.label}
+                                        </p>
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                                            {group.emojis.map((emoji) => (
+                                                <button
+                                                    key={emoji}
+                                                    type="button"
+                                                    onClick={() => setForm({ ...form, emoji })}
+                                                    title={emoji}
+                                                    style={{
+                                                        fontSize: "22px",
+                                                        width: "38px",
+                                                        height: "38px",
+                                                        borderRadius: "8px",
+                                                        border: form.emoji === emoji
+                                                            ? "2px solid var(--accent)"
+                                                            : "1px solid var(--border)",
+                                                        backgroundColor: form.emoji === emoji
+                                                            ? "rgba(var(--accent-rgb, 139,92,246), 0.15)"
+                                                            : "var(--bg)",
+                                                        cursor: "pointer",
+                                                        transition: "all 0.2s ease",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        transform: form.emoji === emoji ? "scale(1.15)" : "scale(1)"
+                                                    }}
+                                                >
+                                                    {emoji}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
 
-                            <input
-                                type="number"
-                                step="0.01"
-                                placeholder="Meta (€)"
-                                value={form.target_amount}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        target_amount:
-                                            e.target.value,
-                                    })
-                                }
-                            />
+                            <div>
+                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Título *</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ej: Viaje a Japón"
+                                    required
+                                    value={form.title}
+                                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                                />
+                            </div>
 
-                            <input
-                                type="number"
-                                step="0.01"
-                                placeholder="Cantidad actual (€)"
-                                value={form.current_amount}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        current_amount:
-                                            e.target.value,
-                                    })
-                                }
-                            />
+                            <div>
+                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Descripción</label>
+                                <textarea
+                                    rows="4"
+                                    placeholder="Detalles sobre el objetivo..."
+                                    value={form.description}
+                                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                                />
+                            </div>
 
-                            <input
-                                type="date"
-                                value={form.target_date}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        target_date:
-                                            e.target.value,
-                                    })
-                                }
-                            />
+                            <div>
+                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Meta (€) *</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0.01"
+                                    placeholder="0.00"
+                                    required
+                                    value={form.target_amount}
+                                    onChange={(e) => setForm({ ...form, target_amount: e.target.value })}
+                                />
+                            </div>
 
-                            <select
-                                value={form.priority}
-                                onChange={(e) =>
-                                    setForm({
-                                        ...form,
-                                        priority:
-                                            e.target.value,
-                                    })
-                                }
-                            >
-                                <option value="high">
-                                    Alta
-                                </option>
+                            <div>
+                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Cantidad actual (€) *</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    placeholder="0.00"
+                                    required
+                                    value={form.current_amount}
+                                    onChange={(e) => setForm({ ...form, current_amount: e.target.value })}
+                                />
+                            </div>
 
-                                <option value="medium">
-                                    Media
-                                </option>
+                            <div>
+                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Fecha límite *</label>
+                                <input
+                                    type="date"
+                                    required
+                                    value={form.target_date}
+                                    onChange={(e) => setForm({ ...form, target_date: e.target.value })}
+                                />
+                            </div>
 
-                                <option value="low">
-                                    Baja
-                                </option>
-                            </select>
+                            <div>
+                                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Prioridad *</label>
+                                <div style={{ display: "flex", gap: "10px" }}>
+                                    {[
+                                        { value: "high", label: "Alta" },
+                                        { value: "medium", label: "Media" },
+                                        { value: "low", label: "Baja" }
+                                    ].map((opt) => (
+                                        <button
+                                            key={opt.value}
+                                            type="button"
+                                            onClick={() => setForm({ ...form, priority: opt.value })}
+                                            style={{
+                                                flex: 1,
+                                                padding: "10px",
+                                                borderRadius: "8px",
+                                                border: "1px solid var(--border)",
+                                                backgroundColor: form.priority === opt.value ? "var(--accent)" : "var(--bg)",
+                                                color: form.priority === opt.value ? "#fff" : "var(--text)",
+                                                cursor: "pointer",
+                                                transition: "all 0.3s ease",
+                                                fontWeight: form.priority === opt.value ? "bold" : "normal"
+                                            }}
+                                        >
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
 
                             <button
                                 type="submit"
                                 className="edit-btn"
-                                style={{
-                                    marginTop: "20px",
-                                }}
+                                style={{ marginTop: "20px" }}
                             >
                                 Guardar Objetivo
                             </button>

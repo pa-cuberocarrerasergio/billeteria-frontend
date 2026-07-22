@@ -9,14 +9,35 @@ export default function DemoDashboard() {
         balance: 1250,
         income: 2500,
         expense: 1250,
+        savings: 750,
         goals: 3,
 
-        mainGoal: {
-            title: "Viaje a Japón",
-            emoji: "✈️",
-            current_amount: 1500,
-            target_amount: 3000,
-        },
+        topGoals: [
+            {
+                id: 1,
+                title: "Fondo de Emergencia",
+                emoji: "🏦",
+                current_amount: 500,
+                target_amount: 2000,
+                priority: "high"
+            },
+            {
+                id: 2,
+                title: "Viaje a Japón",
+                emoji: "✈️",
+                current_amount: 1500,
+                target_amount: 3000,
+                priority: "medium"
+            },
+            {
+                id: 3,
+                title: "Nueva Consola",
+                emoji: "🎮",
+                current_amount: 250,
+                target_amount: 500,
+                priority: "low"
+            }
+        ],
 
         latestTransactions: [
             { id: 1, title: "Nómina", amount: 1800, type: "income", transaction_date: "2026-07-18" },
@@ -29,11 +50,12 @@ export default function DemoDashboard() {
         recommendations: [
             "💡 Podrías ahorrar 120€ más reduciendo ocio un 10%.",
             "⚠️ Tu gasto en suscripciones es superior a la media.",
-            "🚀 Vas por buen camino para completar tu objetivo.",
+            "🚀 Vas por buen camino para completar tu objetivo principal.",
         ],
     };
 
-    const progress = (data.mainGoal.current_amount / data.mainGoal.target_amount) * 100;
+    const primaryGoal = data.topGoals[0];
+    const progress = (primaryGoal.current_amount / primaryGoal.target_amount) * 100;
 
     return (
         <MainLayout>
@@ -76,7 +98,7 @@ export default function DemoDashboard() {
                 <div className="glass-card">
                     <h3>🎯 Objetivos</h3>
                     <h2>{data.goals}</h2>
-                    <p style={{ color: "#94a3b8", fontSize: 13, marginTop: 4 }}>2 en progreso · 1 completado</p>
+                    <p style={{ color: "#94a3b8", fontSize: 13, marginTop: 4 }}>3 en progreso</p>
                 </div>
             </div>
 
@@ -102,23 +124,51 @@ export default function DemoDashboard() {
                     </Link>
                 </div>
 
-                {/* OBJETIVO PRINCIPAL */}
-                <div className="glass-card">
-                    <h3>
-                        {data.mainGoal.emoji} {data.mainGoal.title}
-                    </h3>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, color: "#94a3b8", fontSize: 14 }}>
-                        <span>Ahorrado: <strong style={{ color: "white" }}>{data.mainGoal.current_amount.toLocaleString()} €</strong></span>
-                        <span>Meta: <strong style={{ color: "white" }}>{data.mainGoal.target_amount.toLocaleString()} €</strong></span>
-                    </div>
-                    <div className="progress-bar">
-                        <div className="progress-fill" style={{ width: `${progress}%` }} />
-                    </div>
-                    <p style={{ color: "#4FD1C5", marginTop: 8, fontWeight: 600 }}>
-                        {progress.toFixed(0)}% completado
-                    </p>
+                {/* OBJETIVOS Y TRANSACCIONES ESTILO LISTA COMPACTA */}
+                <div className="glass-card" style={{ display: "flex", flexDirection: "column" }}>
+                    <h3>🎌 Objetivos Destacados</h3>
 
-                    <h3 style={{ marginTop: 20 }}>📋 Últimas transacciones</h3>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginTop: "16px" }}>
+                        {data.topGoals.map((goal) => {
+                            const goalProgress = (goal.current_amount / goal.target_amount) * 100;
+                            return (
+                                <div key={goal.id} style={{ borderBottom: "1px solid var(--border)", paddingBottom: "12px" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                                        <h4 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "6px" }}>
+                                            <span>{goal.emoji}</span> {goal.title}
+                                        </h4>
+                                        <span style={{ 
+                                            fontSize: "11px", 
+                                            padding: "2px 6px", 
+                                            borderRadius: "4px",
+                                            fontWeight: "bold",
+                                            backgroundColor: goal.priority === 'high' ? 'rgba(239, 68, 68, 0.2)' : goal.priority === 'medium' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+                                            color: goal.priority === 'high' ? '#ef4444' : goal.priority === 'medium' ? '#f59e0b' : '#10b981'
+                                        }}>
+                                            {goal.priority.toUpperCase()}
+                                        </span>
+                                    </div>
+                                    
+                                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", color: "var(--text-h)", marginBottom: "6px" }}>
+                                        <span>{Number(goal.current_amount).toFixed(2)} €</span>
+                                        <span>{Number(goal.target_amount).toFixed(2)} €</span>
+                                    </div>
+                                    
+                                    <div className="progress-bar" style={{ height: "6px" }}>
+                                        <div className="progress-fill" style={{ width: `${goalProgress}%` }} />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    <div style={{ marginTop: "16px", paddingTop: "12px" }}>
+                        <button className="edit-btn" style={{ width: "100%", textAlign: "center" }} onClick={() => alert("Registrate para usar BilleterIA")}>
+                            Ver todos los objetivos →
+                        </button>
+                    </div>
+
+                    <h3 style={{ marginTop: 24 }}>📋 Últimas transacciones</h3>
                     {data.latestTransactions.map((t) => (
                         <div key={t.id} className="transaction-row">
                             <div>
@@ -138,7 +188,7 @@ export default function DemoDashboard() {
             </div>
 
             {/* GRÁFICO */}
-            <FinanceChart income={data.income} expense={data.expense} />
+            <FinanceChart income={data.income} expense={data.expense} savings={data.savings} />
 
             {/* CTA DENTRO DEL DASHBOARD */}
             <div className="demo-dashboard-cta glass-card">

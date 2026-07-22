@@ -3,14 +3,39 @@ import MainLayout from "../layouts/MainLayout";
 import api from "../services/api";
 import BilletinAvatar from "../components/BilletinAvatar";
 
+const TONE_LABELS = {
+    motivador: "Motivador",
+    cercano: "Cercano",
+    formal: "Formal",
+};
+
+const normalizeTone = (tone) => (tone === "amigable" ? "cercano" : tone);
+
+const getWelcomeMessage = (name, tone) => {
+    const style = normalizeTone(tone);
+
+    if (style === "formal") {
+        return `Encantado de conocerle, ${name}. A partir de ahora me referiré a usted así y mantendré un tono formal. ¿En qué puedo ayudarle con sus finanzas hoy?`;
+    }
+
+    if (style === "motivador") {
+        return `¡Perfecto, ${name}! 💪 Usaré un estilo motivador contigo. Estoy listo para ayudarte a alcanzar tus metas financieras. ¿Por dónde empezamos?`;
+    }
+
+    return `¡Genial, ${name}! 😊 Hablaré contigo de forma cercana y amigable. Cuéntame, ¿qué te gustaría revisar de tus finanzas?`;
+};
+
 export default function Coach() {
+    const [onboardingStep, setOnboardingStep] = useState(null);
+    const [userId, setUserId] = useState(null);
+    const [userName, setUserName] = useState("");
+    const [userTone, setUserTone] = useState("cercano");
+    const [initialized, setInitialized] = useState(false);
 
     const [message, setMessage] = useState("");
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
-
-    const [avatarMood, setAvatarMood] =
-        useState("normal");
+    const [avatarMood, setAvatarMood] = useState("normal");
 
     const messagesEndRef = useRef(null);
 
@@ -23,74 +48,213 @@ export default function Coach() {
     ];
 
     useEffect(() => {
-        loadHistory();
+        initCoach();
     }, []);
 
     useEffect(() => {
         scrollToBottom();
-    }, [history, loading]);
+    }, [history, loading, onboardingStep]);
 
     const scrollToBottom = () => {
-
         messagesEndRef.current?.scrollIntoView({
             behavior: "smooth",
         });
     };
 
-    const handleQuickPrompt = (prompt) => {
-
-        setMessage(prompt);
+    const addCoachMessage = (text, mood = "happy") => {
+        setHistory((prev) => [
+            ...prev,
+            {
+                id: `${Date.now()}-coach`,
+                role: "coach",
+                text,
+                mood,
+                time: new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                }),
+            },
+        ]);
     };
 
-    const loadHistory = async () => {
+    const formatHistory = (items) => {
+        const formattedHistory = [];
 
-        try {
-
-            const response =
-                await api.get("/coach/history");
-
-            const formattedHistory = [];
-
-            response.data.forEach((item) => {
-
-                formattedHistory.push({
-                    id: `${item.id}-user`,
-                    role: "user",
-                    text: item.message,
-                    time: new Date().toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    }),
-                });
-
-                formattedHistory.push({
-                    id: `${item.id}-coach`,
-                    role: "coach",
-                    text: item.response,
-                    mood: item.mood || "normal",
-                    time: new Date().toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    }),
-                });
+        items.forEach((item) => {
+            formattedHistory.push({
+                id: `${item.id}-user`,
+                role: "user",
+                text: item.message,
+                time: new Date(item.created_at || Date.now()).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                }),
             });
 
-            setHistory(formattedHistory);
+            formattedHistory.push({
+                id: `${item.id}-coach`,
+                role: "coach",
+                text: item.response,
+                mood: item.mood || "normal",
+                time: new Date(item.created_at || Date.now()).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                }),
+            });
+        });
 
+        return formattedHistory;
+    };
+
+    const savePreferences = async (name, tone) => {
+        if (!userId) return;
+
+        await api.put(`/coach-preferences/${userId}`, {
+            preferred_name: name,
+            conversation_style: normalizeTone(tone),
+            coach_background: "default",
+        });
+    };
+
+    const syncLocalPreferences = (name, tone) => {
+        localStorage.setItem("billetin_user_name", name);
+        localStorage.setItem("billetin_user_tone", normalizeTone(tone));
+    };
+
+    const initCoach = async () => {
+        try {
+            const userResponse = await api.get("/user");
+            const user = userResponse.data;
+
+            setUserId(user.id);
+
+            const [preferenceResponse, historyResponse] = await Promise.all([
+                api.get(`/coach-preferences/${user.id}`),
+                api.get("/coach/history"),
+            ]);
+
+            const preferences = preferenceResponse.data;
+            const savedHistory = historyResponse.data || [];
+
+            if (preferences?.preferred_name && preferences?.conversation_style) {
+                setUserName(preferences.preferred_name);
+                setUserTone(preferences.conversation_style);
+                syncLocalPreferences(
+                    preferences.preferred_name,
+                    preferences.conversation_style
+                );
+                setHistory(formatHistory(savedHistory));
+                setOnboardingStep(null);
+            } else {
+                const savedName = localStorage.getItem("billetin_user_name");
+                const savedTone = normalizeTone(
+                    localStorage.getItem("billetin_user_tone") || ""
+                );
+
+                if (savedName && savedTone) {
+                    setUserName(savedName);
+                    setUserTone(savedTone);
+                    await savePreferences(savedName, savedTone);
+                    setHistory(formatHistory(savedHistory));
+                    setOnboardingStep(null);
+                } else if (savedHistory.length === 0) {
+                    setOnboardingStep("name");
+                    setHistory([
+                        {
+                            id: "onboarding-welcome",
+                            role: "coach",
+                            text: "¡Hola! 👋 Soy Billetín, tu coach financiero personal. Antes de empezar, ¿cómo quieres que me refiera a ti?",
+                            mood: "happy",
+                            time: new Date().toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                            }),
+                        },
+                    ]);
+                } else {
+                    setUserName(savedName || user.nickname || "amigo");
+                    setUserTone(savedTone || "cercano");
+                    setHistory(formatHistory(savedHistory));
+                    setOnboardingStep(null);
+                }
+            }
         } catch (error) {
-
             console.error(error);
+        } finally {
+            setInitialized(true);
         }
     };
 
-    const sendMessage = async (e) => {
+    const handleQuickPrompt = (prompt) => {
+        if (onboardingStep) return;
+        setMessage(prompt);
+    };
 
+    const handleNameSubmit = async (e) => {
         e.preventDefault();
 
-        if (!message.trim()) return;
+        const name = message.trim();
+        if (!name) return;
+
+        setMessage("");
+        setUserName(name);
+
+        setHistory((prev) => [
+            ...prev,
+            {
+                id: Date.now(),
+                role: "user",
+                text: name,
+                time: new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                }),
+            },
+        ]);
+
+        setOnboardingStep("tone");
+        addCoachMessage(
+            `¡Encantado, ${name}! 🎉 Ahora elige cómo prefieres que te hable. Puedes elegir entre tres estilos:`,
+            "happy"
+        );
+    };
+
+    const handleToneSelect = async (tone) => {
+        const normalizedTone = normalizeTone(tone);
+
+        setUserTone(normalizedTone);
+        syncLocalPreferences(userName, normalizedTone);
+
+        setHistory((prev) => [
+            ...prev,
+            {
+                id: `${Date.now()}-tone`,
+                role: "user",
+                text: TONE_LABELS[normalizedTone],
+                time: new Date().toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                }),
+            },
+        ]);
+
+        try {
+            await savePreferences(userName, normalizedTone);
+        } catch (error) {
+            console.error(error);
+        }
+
+        setOnboardingStep(null);
+        setAvatarMood("happy");
+        addCoachMessage(getWelcomeMessage(userName, normalizedTone), "happy");
+    };
+
+    const sendMessage = async (e) => {
+        e.preventDefault();
+
+        if (!message.trim() || onboardingStep) return;
 
         const userMessage = message;
-
         setMessage("");
 
         setHistory((prev) => [
@@ -107,22 +271,18 @@ export default function Coach() {
         ]);
 
         setLoading(true);
-
         setAvatarMood("thinking");
 
         try {
+            const response = await api.post("/coach/chat", {
+                message: userMessage,
+                userName: userName || "",
+                userTone: userTone || "cercano",
+            });
 
-            const response =
-                await api.post("/coach/chat", {
-                    message: userMessage,
-                });
+            const reply = response.data.reply;
 
-            const reply =
-                response.data.reply;
-
-            setAvatarMood(
-                response.data.mood || "normal"
-            );
+            setAvatarMood(response.data.mood || "normal");
 
             setHistory((prev) => [
                 ...prev,
@@ -137,219 +297,158 @@ export default function Coach() {
                     }),
                 },
             ]);
-
         } catch (error) {
-
             console.error(error);
-
             setAvatarMood("worried");
-
         } finally {
-
             setLoading(false);
         }
     };
 
+    const inputPlaceholder =
+        onboardingStep === "name"
+            ? "Escribe tu nombre o apodo..."
+            : "Pregunta algo a Billetín...";
+
     return (
-
         <MainLayout>
-
             <div className="coach-container">
-
-                {/* HEADER */}
-
                 <div className="glass-card coach-header">
-
-                    <BilletinAvatar
-                        size={80}
-                        mood={avatarMood}
-                    />
+                    <BilletinAvatar size={80} mood={avatarMood} />
 
                     <div>
-
                         <h2>Billetín IA</h2>
-
-                        <p>
-                            Tu coach financiero personal
-                        </p>
-
+                        <p>Tu coach financiero personal</p>
                     </div>
-
                 </div>
 
-                {/* MENSAJES */}
+                {!initialized ? (
+                    <div className="glass-card" style={{ padding: "24px", textAlign: "center" }}>
+                        <p style={{ color: "#94A3B8", margin: 0 }}>Cargando conversación...</p>
+                    </div>
+                ) : (
+                    <>
+                        <div className="chat-messages">
+                            {history.length === 0 && !loading && !onboardingStep && (
+                                <div className="welcome-card">
+                                    <BilletinAvatar size={90} mood={avatarMood} />
 
-                <div className="chat-messages">
+                                    <h2>
+                                        Hola {userName || "amigo"} 👋 Soy Billetín
+                                    </h2>
 
-                    {history.length === 0 && !loading && (
-
-                        <div className="welcome-card">
-
-                            <BilletinAvatar
-                                size={90}
-                                mood={avatarMood}
-                            />
-
-                            <h2>
-                                Hola 👋 Soy Billetín
-                            </h2>
-
-                            <p>
-                                Puedo ayudarte a ahorrar,
-                                analizar gastos,
-                                planificar objetivos y
-                                mejorar tus finanzas
-                                personales.
-                            </p>
-
-                        </div>
-
-                    )}
-
-                    {history.map((item) => (
-
-                        item.role === "user" ? (
-
-                            <div
-                                key={item.id}
-                                className="user-message-wrapper"
-                            >
-
-                                <div
-                                    className="user-message"
-                                >
-                                    {item.text}
+                                    <p>
+                                        Puedo ayudarte a ahorrar, analizar gastos,
+                                        planificar objetivos y mejorar tus finanzas personales.
+                                    </p>
                                 </div>
+                            )}
 
-                                <small>
-                                    {item.time}
-                                </small>
-
-                            </div>
-
-                        ) : (
-
-                            <div
-                                key={item.id}
-                                className="coach-row"
-                            >
-
-                                <BilletinAvatar
-                                    size={40}
-                                    mood={item.mood || "normal"}
-                                />
-
-                                <div>
-
-                                    <div
-                                        className="coach-message"
-                                    >
-                                        {item.text}
+                            {history.map((item) =>
+                                item.role === "user" ? (
+                                    <div key={item.id} className="user-message-wrapper">
+                                        <div className="user-message">{item.text}</div>
+                                        <small>{item.time}</small>
                                     </div>
+                                ) : (
+                                    <div key={item.id} className="coach-row">
+                                        <BilletinAvatar
+                                            size={40}
+                                            mood={item.mood || "normal"}
+                                        />
 
-                                    <small
-                                        className="message-time"
-                                    >
-                                        {item.time}
-                                    </small>
+                                        <div>
+                                            <div className="coach-message">{item.text}</div>
+                                            <small className="message-time">{item.time}</small>
+                                        </div>
+                                    </div>
+                                )
+                            )}
 
+                            {loading && (
+                                <div className="coach-row">
+                                    <BilletinAvatar size={40} mood="thinking" />
+
+                                    <div className="coach-message">
+                                        <span className="typing-dot"></span>
+                                        <span className="typing-dot"></span>
+                                        <span className="typing-dot"></span>
+                                    </div>
                                 </div>
+                            )}
 
-                            </div>
-
-                        )
-
-                    ))}
-
-                    {loading && (
-
-                        <div className="coach-row">
-
-                            <BilletinAvatar
-                                size={40}
-                                mood="thinking"
-                            />
-
-                            <div
-                                className="coach-message"
-                            >
-
-                                <span
-                                    className="typing-dot"
-                                ></span>
-
-                                <span
-                                    className="typing-dot"
-                                ></span>
-
-                                <span
-                                    className="typing-dot"
-                                ></span>
-
-                            </div>
-
+                            <div ref={messagesEndRef}></div>
                         </div>
 
-                    )}
+                        {onboardingStep === "tone" && (
+                            <div className="tone-options" style={{ marginBottom: "16px" }}>
+                                <button
+                                    onClick={() => handleToneSelect("motivador")}
+                                    className="tone-btn"
+                                    type="button"
+                                >
+                                    💪 Motivador
+                                </button>
+                                <button
+                                    onClick={() => handleToneSelect("cercano")}
+                                    className="tone-btn"
+                                    type="button"
+                                >
+                                    😊 Cercano
+                                </button>
+                                <button
+                                    onClick={() => handleToneSelect("formal")}
+                                    className="tone-btn"
+                                    type="button"
+                                >
+                                    📊 Formal
+                                </button>
+                            </div>
+                        )}
 
-                    <div
-                        ref={messagesEndRef}
-                    ></div>
+                        {!onboardingStep && (
+                            <div className="quick-prompts">
+                                {quickPrompts.map((prompt) => (
+                                    <button
+                                        key={prompt}
+                                        type="button"
+                                        className="quick-prompt-btn"
+                                        onClick={() => handleQuickPrompt(prompt)}
+                                    >
+                                        {prompt}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
 
-                </div>
-
-                {/* QUICK PROMPTS */}
-
-                <div className="quick-prompts">
-
-                    {quickPrompts.map((prompt) => (
-
-                        <button
-                            key={prompt}
-                            type="button"
-                            className="quick-prompt-btn"
-                            onClick={() =>
-                                handleQuickPrompt(prompt)
-                            }
+                        <form
+                            onSubmit={onboardingStep === "name" ? handleNameSubmit : sendMessage}
+                            className="chat-input-container"
                         >
-                            {prompt}
-                        </button>
+                            <input
+                                type="text"
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                placeholder={inputPlaceholder}
+                                className="chat-input"
+                                disabled={onboardingStep === "tone" || loading}
+                            />
 
-                    ))}
-
-                </div>
-
-                {/* INPUT */}
-
-                <form
-                    onSubmit={sendMessage}
-                    className="chat-input-container"
-                >
-
-                    <input
-                        type="text"
-                        value={message}
-                        onChange={(e) =>
-                            setMessage(
-                                e.target.value
-                            )
-                        }
-                        placeholder="Pregunta algo a Billetín..."
-                        className="chat-input"
-                    />
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="chat-send-btn"
-                    >
-                        Enviar
-                    </button>
-
-                </form>
-
+                            <button
+                                type="submit"
+                                disabled={
+                                    loading ||
+                                    onboardingStep === "tone" ||
+                                    !message.trim()
+                                }
+                                className="chat-send-btn"
+                            >
+                                {onboardingStep === "name" ? "Continuar" : "Enviar"}
+                            </button>
+                        </form>
+                    </>
+                )}
             </div>
-
         </MainLayout>
     );
 }

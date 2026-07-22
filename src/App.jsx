@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import DemoDashboard from "./pages/DemoDashboard";
 import DemoTransactions from "./pages/DemoTransactions";
 import DemoCoach from "./pages/DemoCoach";
+import DemoAchievements from "./pages/DemoAchievements";
 
 function App() {
     
@@ -68,6 +69,12 @@ function App() {
                     element={<DemoTransactions />} />
                 <Route path="/demo/coach"
                     element={<DemoCoach />} />
+                <Route path="/demo/achievements"
+                    element={<DemoAchievements />} />
+                <Route path="/demo/profile"
+                    element={<DemoDashboard />} /> {/* Temp, let's make a DemoProfile later if needed */}
+                <Route path="/demo/goals"
+                    element={<DemoDashboard />} /> {/* Temp */}
             </Routes>
         </BrowserRouter>
     );
