@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 import MainLayout from "../layouts/MainLayout";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
 
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const { setUser: setContextUser } = useAuth();
 
     const [preferences, setPreferences] = useState({
         conversation_style: "",
@@ -67,6 +70,30 @@ export default function Profile() {
         }
     };
 
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        setUploadingAvatar(true);
+        try {
+            const res = await api.post("/user/avatar", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            setUser(res.data);
+            setContextUser(res.data);
+            localStorage.setItem("user", JSON.stringify(res.data));
+        } catch (error) {
+            console.error("Error al subir avatar:", error);
+            alert("No se pudo subir la foto. Asegúrate de que es una imagen de menos de 2MB.");
+        } finally {
+            setUploadingAvatar(false);
+            e.target.value = "";
+        }
+    };
+
     return (
         
             <MainLayout>
@@ -80,18 +107,28 @@ export default function Profile() {
                     ) : (
                         <>
                             {user && (
-                                <div
-                                    className="glass-card"
-                                    style={{
-                                        marginBottom: "20px",
-                                    }}
-                                >
-                                    <h2>
-                                        {user.nickname}
-                                    </h2>
-                                    <p>
-                                        {user.email}
-                                    </p>
+                                <div className="glass-card" style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "20px" }}>
+                                    <div style={{ position: "relative" }}>
+                                        {user.avatar ? (
+                                            <img 
+                                              src={user.avatar.startsWith('http') ? user.avatar : `http://127.0.0.1:8000${user.avatar}`} 
+                                              alt="Avatar" 
+                                              style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: "2px solid var(--accent)" }} 
+                                            />
+                                        ) : (
+                                            <div style={{ width: "80px", height: "80px", borderRadius: "50%", backgroundColor: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px", border: "2px solid var(--border)", fontWeight: "bold" }}>
+                                                {user.nickname.charAt(0).toUpperCase()}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div style={{ flex: 1, textAlign: "left" }}>
+                                        <h2 style={{ margin: "0 0 5px 0" }}>{user.nickname}</h2>
+                                        <p style={{ margin: "0 0 15px 0", color: "var(--text-h)" }}>{user.email}</p>
+                                        <label style={{ display: "inline-block", padding: "8px 16px", backgroundColor: "var(--bg)", border: "1px solid var(--border)", borderRadius: "8px", cursor: uploadingAvatar ? "not-allowed" : "pointer", fontSize: "14px", fontWeight: "bold", opacity: uploadingAvatar ? 0.7 : 1 }}>
+                                            {uploadingAvatar ? "Subiendo..." : "Cambiar foto"}
+                                            <input type="file" style={{ display: "none" }} accept="image/*" onChange={handleAvatarChange} disabled={uploadingAvatar} />
+                                        </label>
+                                    </div>
                                 </div>
                             )}
 

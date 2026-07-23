@@ -8,21 +8,10 @@ const DEMO_MSG_LIMIT = 3;
 
 export default function DemoCoach() {
 
-    // Onboarding states
-    const [onboardingStep, setOnboardingStep] = useState(() => {
-        // Check localStorage for existing preferences
-        const savedName = localStorage.getItem("billetin_demo_user_name");
-        const savedTone = localStorage.getItem("billetin_demo_user_tone");
-        if (savedName && savedTone) {
-            return null; // Onboarding complete
-        } else if (savedName) {
-            return 2; // Need to pick tone
-        } else {
-            return 1; // Need to enter name
-        }
-    });
-    const [userName, setUserName] = useState(localStorage.getItem("billetin_demo_user_name") || "");
-    const [userTone, setUserTone] = useState(localStorage.getItem("billetin_demo_user_tone") || "");
+    // Siempre reseteamos al montar para que el onboarding empiece desde cero cada vez
+    const [onboardingStep, setOnboardingStep] = useState(1);
+    const [userName, setUserName] = useState("");
+    const [userTone, setUserTone] = useState("");
 
     // Original states
     const [message, setMessage] = useState("");

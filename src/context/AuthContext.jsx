@@ -60,13 +60,32 @@ export function AuthProvider({ children }) {
 
 
 
+    const logout = () => {
+        const token = localStorage.getItem("token");
+
+        // Limpiar sesión local de inmediato
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setUser(null);
+
+        // Invalidar token en el servidor pasándolo manualmente (ya lo hemos quitado de localStorage)
+        if (token) {
+            api.post("/logout", {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            }).catch(() => {
+                // Si falla (token expirado, etc.) no importa: la sesión local ya está limpia
+            });
+        }
+    };
+
     return (
 
         <AuthContext.Provider
             value={{
                 user,
                 setUser,
-                loading
+                loading,
+                logout
             }}
         >
 
