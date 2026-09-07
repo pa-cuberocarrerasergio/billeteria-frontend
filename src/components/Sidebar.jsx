@@ -49,11 +49,11 @@ export default function Sidebar() {
       icon: Bot,
       label: "Coach IA",
     },
-    {
-      path: isDemo ? "/demo/profile" : "/profile",
+    ...(!isDemo ? [{
+      path: "/profile",
       icon: User,
       label: "Perfil",
-    },
+    }] : []),
     {
       path: isDemo ? "/demo/achievements" : "/achievements",
       icon: Trophy,

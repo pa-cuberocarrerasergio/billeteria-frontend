@@ -73,8 +73,6 @@ function App() {
                     element={<DemoCoach />} />
                 <Route path="/demo/achievements"
                     element={<DemoAchievements />} />
-                <Route path="/demo/profile"
-                    element={<DemoDashboard />} /> {/* Temp, let's make a DemoProfile later if needed */}
                 <Route path="/demo/goals"
                     element={<DemoDashboard />} /> {/* Temp */}
             </Routes>
