@@ -136,6 +136,7 @@ export default function Coach() {
             const preferences = preferenceResponse.data;
             const savedHistory = historyResponse.data || [];
 
+            // Si el usuario ya tiene preferencias guardadas en la base de datos
             if (preferences?.preferred_name && preferences?.conversation_style) {
                 setUserName(preferences.preferred_name);
                 setUserTone(preferences.conversation_style);
@@ -146,37 +147,21 @@ export default function Coach() {
                 setHistory(formatHistory(savedHistory));
                 setOnboardingStep(null);
             } else {
-                const savedName = localStorage.getItem("billetin_user_name");
-                const savedTone = normalizeTone(
-                    localStorage.getItem("billetin_user_tone") || ""
-                );
-
-                if (savedName && savedTone) {
-                    setUserName(savedName);
-                    setUserTone(savedTone);
-                    await savePreferences(savedName, savedTone);
-                    setHistory(formatHistory(savedHistory));
-                    setOnboardingStep(null);
-                } else if (savedHistory.length === 0) {
-                    setOnboardingStep("name");
-                    setHistory([
-                        {
-                            id: "onboarding-welcome",
-                            role: "coach",
-                            text: "¡Hola! 👋 Soy Billetín, tu coach financiero personal. Antes de empezar, ¿cómo quieres que me refiera a ti?",
-                            mood: "happy",
-                            time: new Date().toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                            }),
-                        },
-                    ]);
-                } else {
-                    setUserName(savedName || user.nickname || "amigo");
-                    setUserTone(savedTone || "cercano");
-                    setHistory(formatHistory(savedHistory));
-                    setOnboardingStep(null);
-                }
+                // Si NO tiene preferencias en la base de datos, iniciamos el onboarding siempre
+                setOnboardingStep("name");
+                setMessage(user.nickname || ""); // Sugerimos su nombre/nickname actual por defecto
+                setHistory([
+                    {
+                        id: "onboarding-welcome",
+                        role: "coach",
+                        text: `¡Hola ${user.nickname || ""}! 👋 Soy Billetín, tu coach financiero personal. Antes de empezar, ¿cómo quieres que me refiera a ti?`,
+                        mood: "happy",
+                        time: new Date().toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                        }),
+                    },
+                ]);
             }
         } catch (error) {
             console.error(error);

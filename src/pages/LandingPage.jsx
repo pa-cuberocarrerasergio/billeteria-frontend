@@ -136,9 +136,9 @@ export default function LandingPage() {
             <Link to="/login" className="landing-btn-primary">
               🚀 Empezar gratis
             </Link>
-            <a href="#demo-chat" className="landing-btn-secondary">
+            <Link to="/demo/dashboard" className="landing-btn-secondary">
               Ver demo sin registrarse
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -556,12 +556,8 @@ export default function LandingPage() {
             <span className="landing-logo-text">BilleterIA</span>
           </div>
           <p className="landing-footer-copy">
-            © 2024 BilleterIA. Todos los derechos reservados.
+            © 2026 BilleterIA. Todos los derechos reservados.
           </p>
-          <div className="landing-footer-links">
-            <a href="#">Términos de servicio</a>
-            <a href="#">Política de privacidad</a>
-          </div>
         </div>
       </footer>
     </div>

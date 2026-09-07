@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api, { BASE_SERVER_URL } from "../services/api";
 import MainLayout from "../layouts/MainLayout";
 import { useAuth } from "../context/AuthContext";
 
@@ -111,7 +111,7 @@ export default function Profile() {
                                     <div style={{ position: "relative" }}>
                                         {user.avatar ? (
                                             <img 
-                                              src={user.avatar.startsWith('http') ? user.avatar : `http://127.0.0.1:8000${user.avatar}`} 
+                                              src={user.avatar.startsWith('http') ? user.avatar : `${BASE_SERVER_URL}${user.avatar}`} 
                                               alt="Avatar" 
                                               style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover", border: "2px solid var(--accent)" }} 
                                             />

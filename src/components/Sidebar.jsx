@@ -1,21 +1,28 @@
-import { LayoutDashboard, Receipt, Target, Bot, User, Trophy } from "lucide-react";
+import { useState } from "react";
+import { LayoutDashboard, Receipt, Target, Bot, User, Trophy, Menu, X } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import BilletinAvatar from "./BilletinAvatar";
+import { BASE_SERVER_URL } from "../services/api";
 
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const isDemo = location.pathname.startsWith("/demo");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const toggleMobileMenu = () => setMobileOpen(!mobileOpen);
+  const closeMobileMenu = () => setMobileOpen(false);
 
   const handleLogout = () => {
+    closeMobileMenu();
     logout();
     navigate("/");
   };
 
   const handleExitDemo = () => {
-    // Limpiamos todos los datos de la sesión demo
+    closeMobileMenu();
     localStorage.removeItem("billetin_demo_user_name");
     localStorage.removeItem("billetin_demo_user_tone");
     navigate("/");
@@ -55,104 +62,116 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="sidebar">
-      <div className="logo">
-        <span className="logo-icon">💰</span>
-        <div>
-          <div className="logo-text">BilleterIA</div>
-          <div className="logo-subtitle">{isDemo ? "Modo Demo" : "Tu finanzas"}</div>
+    <>
+      {/* Mobile Top Navbar (shown on <=768px screens) */}
+      <header className="mobile-header">
+        <div className="mobile-header-brand" onClick={closeMobileMenu}>
+          <span className="logo-icon">💰</span>
+          <span className="logo-text">BilleterIA</span>
+          {isDemo && <span className="demo-tag" style={{ marginLeft: 6 }}>DEMO</span>}
         </div>
-      </div>
+        <button 
+          className="mobile-hamburger-btn"
+          onClick={toggleMobileMenu}
+          aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+        >
+          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </header>
 
-      <nav>
-        {navItems.map((item) => (
-          <Link
-            key={item.path}
-            to={item.path}
-            className={`${location.pathname === item.path ? "active-link" : ""}`}
-          >
-            <item.icon size={20} />
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </nav>
+      {/* Backdrop for closing mobile menu */}
+      {mobileOpen && (
+        <div 
+          className="sidebar-backdrop"
+          onClick={closeMobileMenu}
+        />
+      )}
 
-      <div className="sidebar-footer">
-        {user && user.avatar ? (
-            <img 
-              src={user.avatar.startsWith('http') ? user.avatar : `http://127.0.0.1:8000${user.avatar}`} 
-              alt="Avatar" 
-              style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} 
-            />
-        ) : (
-            <BilletinAvatar size={40} mood="happy" />
-        )}
-        <div style={{ flex: 1 }}>
-          <div className="footer-user" style={{ marginBottom: "2px" }}>{user ? user.nickname || "Usuario" : "Usuario"}</div>
-          {!isDemo && (
-              <button 
-                onClick={handleLogout}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
-                  e.target.style.color = "#ef4444";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = "transparent";
-                  e.target.style.color = "var(--text-h)";
-                }}
-                style={{ 
-                  background: "transparent", 
-                  border: "1px solid var(--border)", 
-                  color: "var(--text-h)", 
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  cursor: "pointer", 
-                  padding: "4px 10px",
-                  marginTop: "4px",
-                  borderRadius: "12px",
-                  transition: "all 0.2s ease",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px"
-                }}
-              >
-                Cerrar sesión
-              </button>
-          )}
-          {isDemo && (
-            <>
-              <div className="footer-plan" style={{ marginBottom: "4px" }}>Demo Gratuita</div>
-              <button
-                onClick={handleExitDemo}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
-                  e.target.style.color = "#ef4444";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = "transparent";
-                  e.target.style.color = "var(--text-h)";
-                }}
-                style={{ 
-                  background: "transparent", 
-                  border: "1px solid var(--border)", 
-                  color: "var(--text-h)", 
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  cursor: "pointer", 
-                  padding: "4px 10px",
-                  borderRadius: "12px",
-                  transition: "all 0.2s ease",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px"
-                }}
-              >
-                Volver al inicio
-              </button>
-            </>
-          )}
+      {/* Sidebar Drawer Container */}
+      <aside className={`sidebar ${mobileOpen ? "mobile-open" : ""}`}>
+        <div className="logo">
+          <span className="logo-icon">💰</span>
+          <div>
+            <div className="logo-text">BilleterIA</div>
+            <div className="logo-subtitle">{isDemo ? "Modo Demo" : "Tus finanzas"}</div>
+          </div>
         </div>
-      </div>
-    </aside>
+
+        <nav>
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`${location.pathname === item.path ? "active-link" : ""}`}
+              onClick={closeMobileMenu}
+            >
+              <item.icon size={20} />
+              <span>{item.label}</span>
+            </Link>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          {user && user.avatar ? (
+              <img 
+                src={user.avatar.startsWith('http') ? user.avatar : `${BASE_SERVER_URL}${user.avatar}`} 
+                alt="Avatar" 
+                style={{ width: "40px", height: "40px", borderRadius: "50%", objectFit: "cover" }} 
+              />
+          ) : (
+              <BilletinAvatar size={40} mood="happy" />
+          )}
+          <div style={{ flex: 1 }}>
+            <div className="footer-user" style={{ marginBottom: "2px" }}>{user ? user.nickname || "Usuario" : "Usuario"}</div>
+            {!isDemo && (
+                <button 
+                  onClick={handleLogout}
+                  style={{ 
+                    background: "transparent", 
+                    border: "1px solid var(--border)", 
+                    color: "var(--text-h)", 
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    cursor: "pointer", 
+                    padding: "4px 10px",
+                    marginTop: "4px",
+                    borderRadius: "12px",
+                    transition: "all 0.2s ease",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px"
+                  }}
+                >
+                  Cerrar sesión
+                </button>
+            )}
+            {isDemo && (
+              <>
+                <div className="footer-plan" style={{ marginBottom: "4px" }}>Demo Gratuita</div>
+                <button
+                  onClick={handleExitDemo}
+                  style={{ 
+                    background: "transparent", 
+                    border: "1px solid var(--border)", 
+                    color: "var(--text-h)", 
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    cursor: "pointer", 
+                    padding: "4px 10px",
+                    borderRadius: "12px",
+                    transition: "all 0.2s ease",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px"
+                  }}
+                >
+                  Volver al inicio
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </aside>
+    </>
   );
 }
