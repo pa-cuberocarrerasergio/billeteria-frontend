@@ -147,6 +147,7 @@ export default function EditTransaction() {
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
                                 {categories
                                     .filter(category => category.type === form.type)
+                                    .filter((cat, index, self) => index === self.findIndex(t => t.name.toLowerCase().trim() === cat.name.toLowerCase().trim()))
                                     .map((category) => (
                                         <button
                                             key={category.id}
@@ -155,7 +156,7 @@ export default function EditTransaction() {
                                             style={catBtnStyle(form.category_id === category.id)}
                                             title={category.name}
                                         >
-                                            {category.name}
+                                            {category.icon ? `${category.icon} ` : ""}{category.name}
                                         </button>
                                     ))}
                             </div>
@@ -168,6 +169,7 @@ export default function EditTransaction() {
                                 <option value="" disabled>Selecciona categoría</option>
                                 {categories
                                     .filter(c => c.type === form.type)
+                                    .filter((cat, index, self) => index === self.findIndex(t => t.name.toLowerCase().trim() === cat.name.toLowerCase().trim()))
                                     .map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                             </select>
                         </div>
